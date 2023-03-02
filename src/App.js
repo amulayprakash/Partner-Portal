@@ -8,7 +8,7 @@ import HomePage from './Components/HomePage';
 import AddDocument from './Components/AddDocument';
 import AddQr from './Components/AddQr';
 import AddGroup from './Components/AddGroup';
-
+import AddCustomer from './Components/AddCustomer'
 
 function App() {
   return (
@@ -17,10 +17,11 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/addcustomer" element={<AddCustomer />} />
           <Route path="/signup" element={<Signup />}/>
           <Route path="/login" element={<Login /> } />
-          <Route path="/addoc" element={<AddDocument/> } />
-          <Route path="/addqr"  element={<AddQr />} />
+          <Route path="/:id/addoc" element={<AddDocument/> } />
+          <Route path="/:id/addqr"  element={<AddQr />} />
           <Route path="/addgroup"  element={<AddGroup />} />
         </Routes>
 

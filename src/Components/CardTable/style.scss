@@ -1,0 +1,229 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Times New Roman', Times, serif
+  }
+  
+  /* Float four columns side by side */
+  .column {
+    float: left;
+    width: 20%;
+    padding: 0 ;
+  }
+  
+  /* Remove extra left and right margins, due to padding in columns */
+  .row {margin: 0 -5px;}
+
+  .head{
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  }
+  
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  
+  /* Style the counter cards */
+  .card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
+    padding: 16px;
+    text-align: center;
+    background-color: #efeded;
+    opacity: 80%;
+    border: 1px solid gray;
+  
+    background-color:rgb(18, 77, 212);
+    color:white;
+    }
+
+  .card_content {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    padding: 10px;
+    background-color: white;
+    height: 250px;
+    opacity: 80%;
+    border: 1px solid rgb(128, 128, 128);
+    font-size:.85rem;
+    text-align: left;
+  }
+
+  /* .content1{
+    
+    text-align: center;
+  }
+  */
+
+  .card:hover{
+    box-shadow: 0 0 25px rgb(150, 150, 150);
+  }
+  .card_content:hover{
+    box-shadow: 0 0 25px rgb(36, 31, 31);
+  }
+
+  .app__table{
+    
+    width:1200px;
+    border-collapse: collapse;
+  
+  }
+
+  
+  /* Responsive columns - one column layout (vertical) on small screens */
+  @media screen and (max-width: 600px) {
+    .column {
+      width: 100%;
+      display: block;
+      margin-bottom: 20px;
+    }
+  }
+
+  body.active-modal {
+    overflow-y: hidden;
+  }
+  
+  .btn-modal {
+    padding: 10px 20px;
+    display: block;
+    margin: 100px auto 0;
+    font-size: 18px;
+  }
+  
+  .modal, .overlay {
+    
+    width: 100vw;
+    height: 120vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+  
+  }
+  
+  .overlay {
+    background: rgba(49,49,49,0.8);
+  }
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 1.4;
+    background: #f1f1f1;
+    padding: 14px 28px;
+    border-radius: 3px;
+    max-width: 600px;
+    min-width: 300px;
+  }
+  
+  .modal-content_qr {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 1.4;
+    background: #f1f1f1;
+    padding: 14px 28px;
+    border-radius: 3px;
+    max-width: 600px;
+    min-width: 300px;
+  }
+  
+  .close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 7px;
+    float: right;
+  }
+  
+  .select-long{
+    height: 30px;
+    margin: 10px;
+  }
+
+  .app__form{
+    padding-top: 20px;
+    align-items: center;
+    display: grid;
+    margin: auto;
+}
+.app__form_qr{
+  padding-top: 15px;
+  align-items: center;
+  display: grid;
+  margin: auto;
+}
+
+.form__text{
+    align-items: right;    
+}
+
+.head-text {
+    font-size: 2.75rem;
+    font-weight: 800;
+    text-align: center;
+    color: var(--black-color);
+    text-transform: capitalize;
+  
+    span {
+      color: var(--secondary-color);
+    }
+  
+    @media screen and (min-width: 2000px) {
+      font-size: 4rem;
+    }
+  
+    @media screen and (max-width: 450px) {
+      font-size: 2rem;
+    }
+  }
+  
+  .p-text {
+    font-size: 0.8rem;
+    text-align: left;
+    color: var(--gray-color);
+    line-height: 1.5;
+  
+    @media screen and (min-width: 2000px) {
+      font-size: 1.75rem;
+    }
+  }
+  
+  .bold-text {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--black-color);
+    text-align: left;
+  
+    @media screen and (min-width: 2000px) {
+      font-size: 2rem;
+    }
+  
+    @media screen and (max-width: 450px) {
+      font-size: 0.9rem;
+    }
+  }
+.btn{
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    border: none;
+    background-color: var(--secondary-color);
+    font-weight: 500;
+    color: var(--white-color);
+    outline: none;
+    margin: 2rem 0 0 0;
+    font-family: var(--font-base);
+    cursor: pointer;
+}

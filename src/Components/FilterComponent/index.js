@@ -2,13 +2,14 @@ import React, { useState } from 'react'
 import { TextField,Button } from '@mui/material'
 import './style.scss'
 
-const AddGroup = () => {
-    const [groupId, setGroupId] = useState('')
-    const [name, setName] = useState('')
-    const [destination,setDestination]=useState('')
-    const [startDate,setStartDate]=useState('')
-    const [endDate,setEndDate]=useState('')
-    const [hash,setHash]=useState('')
+const FilterComponent = () => {
+    // const [groupId, setGroupId] = useState('')
+    // const [name, setName] = useState('')
+    // const [destination,setDestination]=useState('')
+    // const [startDate,setStartDate]=useState('')
+    // const [endDate,setEndDate]=useState('')
+    // const [hash,setHash]=useState('')
+    const [group, setGroup] = useState('')
 
     const handleSubmit= (e) => {
         e.preventDefault()
@@ -59,4 +60,4 @@ const AddGroup = () => {
   )
 }
 
-export default AddGroup
+export default FilterComponent

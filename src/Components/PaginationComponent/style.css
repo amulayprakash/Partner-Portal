@@ -1,0 +1,32 @@
+.pagination {
+    display: flex;
+  justify-content: center;
+}
+  .pagination a {
+
+    color: white;
+    float: left;
+    background-color: #3989f2;
+    padding: 8px 20px;
+    text-decoration: none;
+    margin: 0 2px;
+  }
+  
+  .pagination a.active {
+    background-color: #313bac;
+    color: white;
+    border-radius: 5px;
+  }
+  .pagination a:hover:not(.active) {background-color:#3989f2;opacity: 80%;}  
+
+  .pagination li{
+    list-style: none;
+  }
+
+  li.page-item:first-child {
+    margin-left: auto;
+}
+
+li.page-item:last-child {
+    margin-right: auto;
+}
