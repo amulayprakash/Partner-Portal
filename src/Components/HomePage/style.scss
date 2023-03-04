@@ -122,3 +122,8 @@ body.active-modal {
   margin: 10px;
 }
 
+.date-time-ip{
+  input[value=""]::-webkit-datetime-edit{ color: transparent; }
+  input:focus::-webkit-datetime-edit{ color: #000; }
+}
+

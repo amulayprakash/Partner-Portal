@@ -7,17 +7,29 @@ import {MdDeleteForever,MdClose} from 'react-icons/md'
 import {Link} from 'react-router-dom' 
 import PaginationComponents from '../PaginationComponent'
 import { TextField } from '@mui/material'
+import ReactPaginate from 'react-paginate'
 //replace groups by cusgroups
 
 const TableCard = ({searched,sort}) => {
     const [datas, setData] = useState([]) 
+    const [newData, setNewData] = useState([])
     const [loading, setLoading] = useState(false)
-    const [currentPage, setCurrentPage] = useState(1)
-    const [postsPerPage, setPostsPerPage] = useState(20)
+    const [pageCount, setPageCount] = useState(0)
     
     const [docModal, setDocModal] = useState(false)
     const [qrModal, setQrModal] = useState(false)
-    const [docId,setDocId]=useState('')
+    const [groupModal,setGroupModal]=useState(false)
+
+    const [allGroups, setAllGroups] = useState([])
+    const [groupSelect,setGroupSelect]=useState(false)
+    const [groupName, setGroupName] = useState('')
+    const [groupId, setGroupId] = useState('')
+    const [groupDes,setGroupDescription]=useState('')
+    const [gstartDate, setGstartDate] = useState('')
+    const [gendDate, setGendDate] = useState('')
+
+
+    const [docTags,setdocTags]=useState([])
     const [name, setName] = useState('')
     const [description,setDescription]=useState('')
     const [filename,setFilename]=useState(' ')
@@ -29,23 +41,28 @@ const TableCard = ({searched,sort}) => {
 
     const navigate=useNavigate()
 
+    //initial data
     useEffect(() => {
-        const getData=async() => {
+        const getNewData=async(curPage) => {
             setLoading(true)
             try {
-                await axios.get("https://we-safe-partner-portal-backend1.onrender.com/customerData").then(res=> {
-                    setData(res.data.customers)
+                await axios.get(`https://we-safe-partner-portal-backend1.onrender.com/customerData/new?page=${curPage}&limit=10`).then(res=>{
+                    setPageCount(Math.ceil(res.data.results.total/10))
+                    setNewData(res.data.results.customers)
                     setLoading(false)
-                }).catch(err => {
+                    
+                }).catch(err=>{
                     console.log(err.message)
-                }) 
-            } catch (error) {
-                console.log(error.message)
+                })
+            } catch (error) {   
+                console.error(error.message)
             }
         }
-        getData()
+        getNewData(1)
     },[])
 
+    
+    //for searchbar
     useEffect(() => {
         const getData=async() => {
             try {
@@ -66,7 +83,6 @@ const TableCard = ({searched,sort}) => {
     },[searched])
 
     useEffect(() => {
-        //sort===true?(setData(datas.sort((a,b) => a.name.localeCompare(b.name)))):(setData(datas))
         if(sort)
             setData(datas.sort((a,b) => a.name.localeCompare(b.name)))
         else{
@@ -88,6 +104,24 @@ const TableCard = ({searched,sort}) => {
         navigate("/")
     },[sort])
 
+    //for getting all groups
+    useEffect(() => {
+        const getGroups=async() => {
+            try {
+                await axios.get("https://we-safe-partner-portal-backend1.onrender.com/groups").then(res=> {
+                    setAllGroups(res.data.groups)
+                }).catch(err => {
+                    console.log(err.message)
+                }) 
+            } catch (error) {
+                console.log(error.message)
+            }
+        }
+        getGroups()
+    },[])
+
+
+    //to delete a doc
     const handleDocDeleteClick=async(id) => {
         axios.delete(`https://we-safe-partner-portal-backend1.onrender.com/doc/${id}`).then(res=> {
             console.log(res)
@@ -97,9 +131,10 @@ const TableCard = ({searched,sort}) => {
         navigate("/")
     }
 
+
+    //to upload a doc
     const handleDocSubmit=async(e) => {
         e.preventDefault()
-        //console.log(name,filename,description,custId)
         axios.post("https://we-safe-partner-portal-backend1.onrender.com/upload",{name,filename,description,customerId:custId},{
             headers:{
                 "Content-Type":"multipart/form-data",
@@ -109,6 +144,7 @@ const TableCard = ({searched,sort}) => {
                 console.log(res)
                 toggleDocModal()
                 setCustId('')
+                console.log(docTags)
                 window.location.reload()
             }).catch((err) => {
                 console.log(err.message)
@@ -117,6 +153,7 @@ const TableCard = ({searched,sort}) => {
         
     }
 
+    //assign qr
     const handleQrSubmit=async(e) => {
         e.preventDefault()
         axios.post(`https://we-safe-partner-portal-backend1.onrender.com/customers/${custId}/qr`,{qrId,qrPin},{
@@ -132,11 +169,57 @@ const TableCard = ({searched,sort}) => {
             }).catch((err) => {
                 console.log(err.message)
             })
-        // console.log(customerId)
         navigate("/")
-        //console.log(qrId,qrPin,custId)
     }
 
+    //to assign a group or make a new group and add the customer to it
+    const handleGroupSubmit=async(e) => {
+        e.preventDefault()
+        
+        const alreadyGroupExists=async(id) => {
+            axios.post(`https://we-safe-partner-portal-backend1.onrender.com/customers/${id}/groups`,{groupName,groupId},{
+                header:{
+                    "Content-Type":"application/json"
+                }
+            }).then(res => {
+                console.log(res)
+                toggleDocModal()
+                setCustId('')
+                setGroupSelect(false)
+                window.location.reload()
+            }).catch(err => {
+                console.log(err.message)
+            })
+        }
+
+        const newGroupAdd=async(id) => {
+            axios.post(`https://we-safe-partner-portal-backend1.onrender.com/createGroupAddCustomer/${id}`,{groupName,
+            groupDescription:groupDes,startDate:new Date(gstartDate),endDate:new Date(gendDate)},{
+                headers:{
+                    "Content-Type":"application/json"
+                }
+            }).then(res=>{
+                console.log(res)
+                
+                setCustId('')
+                window.location.reload()
+            }).catch(err=>{
+                console.log(err.message)
+            })
+        }
+        if(groupSelect){
+            alreadyGroupExists(custId)    
+        }else{
+            newGroupAdd(custId)
+        }
+        console.log(groupName)
+        console.log(groupId)
+        toggleDocModal()
+
+        navigate("/")
+    }
+
+    //to delete qr
     const handleQrDeleteClick=async(id) => {
         axios.delete(`https://we-safe-partner-portal-backend1.onrender.com/qr/${id}`).then(res=> {
             console.log(res)
@@ -146,13 +229,46 @@ const TableCard = ({searched,sort}) => {
         navigate("/")
     }
 
+    //delete a customer
+    const deleteCustomer=async(id) => {
+        axios.delete(`https://we-safe-partner-portal-backend1.onrender.com/customer/${id}`).then(res => {
+            console.log(res)
+        }).catch(err => {
+            console.log(err.message)
+        })
+        window.location.reload()
+    }
+
+    //to assign document tags
+    const handleDocTags=(tags) => {
+        const tagArr=tags.split(",")
+        setdocTags(tagArr)
+    }
+
     //Get Current Datas
-    const lastPostIndex=currentPage*postsPerPage
-    const firstPostIndex=lastPostIndex-postsPerPage
-    const currentPosts=datas.slice(firstPostIndex,lastPostIndex)
+    // const lastPostIndex=currentPage*postsPerPage
+    // const firstPostIndex=lastPostIndex-postsPerPage
+    // const currentPosts=datas.slice(firstPostIndex,lastPostIndex)
     //console.log(currentPosts)
     // }))
 
+    //paginated fetching of data
+    const getNewData=async(curPage) => {
+        setLoading(true)
+        try {
+            await axios.get(`https://we-safe-partner-portal-backend1.onrender.com/customerData/new?page=${curPage}&limit=10`).then(res=>{
+                setNewData(res.data.results.customers)
+                setLoading(false)
+                
+            }).catch(err=>{
+                console.log(err.message)
+            })
+        } catch (error) {   
+            console.error(error.message)
+        }
+    }
+
+    //toggling functions
     const toggleDocModal=() => {
         setDocModal(!docModal)
     }
@@ -160,12 +276,17 @@ const TableCard = ({searched,sort}) => {
     const toggleQrModal=() => {
         setQrModal(!qrModal)
     }
-    
 
-    const paginate=(pageNumber) => {
-        setCurrentPage(pageNumber)
+    const toggleGroupModal=() => {
+        setGroupModal(!groupModal)
     }
-
+    
+    //fetching paginatedd api contd
+    const handlePageChange=(data) => {
+        let curPage=data.selected+1
+        getNewData(curPage)
+        window.scrollTo({top: 0})
+    }
    
    return (
     <div>
@@ -191,10 +312,10 @@ const TableCard = ({searched,sort}) => {
                 
                 {
                 
-                currentPosts.map((data,index) =>{
+                newData.map((data,index) =>{
                         return(
                         <>
-                            <div className="column">
+                            <div key={data._id} className="column">
                                 <div className="card_content"  >
                                     <div className='content1'  >
                                     
@@ -206,10 +327,6 @@ const TableCard = ({searched,sort}) => {
                                     <div style={{display:'flex',alignItems:'left',marginTop:'0%'}} >
                                         <p  style={{alignItems:'left',marginTop:'25px'}}>  <span>{data.address}</span></p>
                                     </div>
-                                    {/* <div style={{display:'flex',alignItems:'left'}} >
-                                        <p> <b>Gender:</b> <span>{data.gender}</span></p>
-                                    </div> */}
-                            
                                     {
                                         data.dob!=null?(
                                         <div style={{display:'flex',alignItems:'left',marginTop:'5px'}}  >
@@ -219,9 +336,6 @@ const TableCard = ({searched,sort}) => {
                                             <div style={{display:'flex',alignItems:'left',marginTop:'5px'}}  ><p> DOB: <span> N/A</span></p></div>
                                         )
                                     }
-                                    {/* <div>
-                                        <p> <b>DOB:</b> <span>{JSON.stringify(data.dob).substring(1,11)}</span></p>
-                                    </div> */}
                                     {
                                         data.bloodGroup?(
                                         <div style={{display:'flex',alignItems:'left',marginTop:'5px'}} >
@@ -251,7 +365,7 @@ const TableCard = ({searched,sort}) => {
                                     {
                                         (data?.customerGroups?.length>0)?(
                                             data?.customerGroups?.slice(1)?.map((group) => (
-                                                <div style={{marginTop:'2px'}}>
+                                                <div key={group._id} style={{marginTop:'2px'}}>
                                                     <div>{group.groupName}</div>
                                                 </div>
                                             ))
@@ -260,19 +374,9 @@ const TableCard = ({searched,sort}) => {
                                         )
                                     }
                                     </div>
-                                    {/* {
-                                       (group1[index]?.length>0)?(
-                                        group1[index]?.map((group) => (
-                                            <div style={{marginTop:'15px'}}>{group.groupName}</div>
-                                        ))):(
-                                            <div style={{marginTop:'60px',color:'red'}} >No Group Assigned Yet</div>   
-                                        )
-                                        
-                                    } */}
-                                    
-                                    
                                 </div>
                             </div>
+
                             <div className="column" style={{ display:'inline',justifyContent:'center',alignItems:'center'}}>
                                 <div className="card_content"  >
                                     <b>Documents: </b>
@@ -287,7 +391,7 @@ const TableCard = ({searched,sort}) => {
                                                     
                                                 }
                                                 return(
-                                                <div style={{marginTop:'2px'}} key={doc._id} >
+                                                <div key={doc._id} style={{marginTop:'2px'}} >
                                                    <div style={{textDecoration:'underline'}} ><a   > {doc.name}</a><span> 
                                                     <MdDeleteForever onClick={e=>
                                                         {   e.preventDefault()
@@ -303,11 +407,9 @@ const TableCard = ({searched,sort}) => {
                                         )
                                     }
                                     </div>
-                                    
-                                    
                                 </div>
-                                
                             </div>
+
                             <div className="column">
                                 <div className="card_content">
                                 <b>WeSafe</b>
@@ -318,7 +420,7 @@ const TableCard = ({searched,sort}) => {
                                     {
                                         (data?.customerQrs?.length>0)?(
                                             data?.customerQrs?.map((qr) => (
-                                                <div>
+                                                <div key={qr._id} >
                                                     <div style={{marginTop:'2px'}} >{qr.qrId} - <span> {qr.qrPin}</span> <span> 
                                                         <MdDeleteForever onClick={e=>
                                                         {   e.preventDefault()
@@ -347,8 +449,18 @@ const TableCard = ({searched,sort}) => {
                                     >Add Document</Button>
                                     </div>
                                     <div>
-                                        <Button style={{color:'white',borderRadius:'5px',backgroundColor:'#313bac',width:'140px',height:'25px',margin:'10px'}} >Add/Edit Group</Button>
-                                    </div><div>
+                                        <Button style={{color:'white',borderRadius:'5px',backgroundColor:'#313bac',
+                                        width:'140px',height:'25px',margin:'10px'}} 
+                                        onClick={() => {
+                                            setCustId(data._id)
+                                            toggleGroupModal()
+                                            
+                                        }} 
+                                        >
+                                            Add/Edit Group
+                                        </Button>
+                                    </div>
+                                    <div>
                                     <Button 
                                         onClick={() => {
                                             setCustId(data._id)
@@ -359,8 +471,16 @@ const TableCard = ({searched,sort}) => {
                                         height:'25px',margin:'10px'}} >
                                             Issue Qr Code
                                     </Button>
-                                    </div><div>
-                                        <Button style={{color:'white',borderRadius:'5px',backgroundColor:'#8b1010',width:'140px',height:'25px',margin:'10px'}}>Delete User</Button>
+                                    </div>
+                                    <div>
+                                        <Button style={{color:'white',borderRadius:'5px',
+                                        backgroundColor:'#8b1010',width:'140px',height:'25px',margin:'10px'}}
+                                            onClick={()=>{
+                                                deleteCustomer(data._id)    
+                                            }}
+                                        >
+                                            Delete User
+                                        </Button>
                                     </div>
                                 </div>
                             </div>
@@ -373,14 +493,19 @@ const TableCard = ({searched,sort}) => {
                                 <Button onClick={toggleDocModal} style={{marginLeft:'425px',paddingLeft:'40px'}} ><MdClose style={{color:'#313bac',height:'1.2rem',width:'1.3rem'}}  /></Button>
                                 <form onSubmit={handleDocSubmit} className='app__form' >
                                 <h3 className='head-text' style={{fontSize:'1.5rem',marginRight:'10%'}} >Upload The <span>Required</span> Document</h3>
-                                    
                                     <TextField style={{marginTop:'20px',width:'500px',marginLeft:'20px'}}  className='form__text' id="outlined-basic" 
+                                    variant="outlined" type='file' onChange={(e) =>setFilename(e.target.files[0])} />
+                                    <div>
+                                    <TextField style={{marginTop:'20px',width:'240px',marginLeft:'20px'}}  className='form__text' id="outlined-basic" 
                                     variant="outlined" label='Name of Document' type='text' onChange={(e) =>setName(e.target.value)} />
+                                    <TextField style={{marginTop:'20px',width:'240px',marginLeft:'20px'}}  className='form__text' id="outlined-basic" 
+                                    variant="outlined" label='Tags' type='text' onChange={e=>handleDocTags(e.target.value)} />
+                                    </div>
+                                    
                                     <TextField style={{marginTop:'20px',width:'500px',marginLeft:'20px'}}  className='form__text' id="outlined-basic" 
                                     variant="outlined" type='text' label='Description' onChange={(e) =>setDescription(e.target.value)} />
                                     
-                                    <TextField style={{marginTop:'20px',width:'500px',marginLeft:'20px'}}  className='form__text' id="outlined-basic" 
-                                    variant="outlined" type='file' onChange={(e) =>setFilename(e.target.files[0])} />
+                                    
                                     <Button className='btn p-text' variant="outlined" 
                                     style={{width:'100px',margin:'auto',marginTop:'20px',marginRight:'45%'}}  type='submit'
                                     
@@ -401,11 +526,13 @@ const TableCard = ({searched,sort}) => {
                                 <Button onClick={toggleQrModal} style={{marginLeft:'425px',paddingLeft:'40px'}} ><MdClose style={{color:'#313bac',height:'1.2rem',width:'1.3rem'}}  /></Button>
                                 <form onSubmit={handleQrSubmit} className='app__form_qr' >
                                 <h3 className='head-text' style={{fontSize:'1.5rem'}} >Assign <span>We Safe QR Code</span> To Customer</h3>
-                                    
-                                    <TextField style={{marginTop:'20px',width:'500px',marginLeft:'10px'}}  className='form__text' id="outlined-basic" 
+                                    <div style={{display:'flex'}} >
+                                    <TextField style={{marginTop:'20px',width:'200px',marginLeft:'10px'}}  className='form__text' id="outlined-basic" 
                                     variant="outlined" label='Enter Qr Id' type='text' onChange={(e) =>setQrId(e.target.value)} />
-                                    <TextField style={{marginTop:'20px',width:'500px',marginLeft:'10px'}}  className='form__text' id="outlined-basic" 
+                                    <TextField style={{marginTop:'20px',width:'200px',marginLeft:'10px'}}  className='form__text' id="outlined-basic" 
                                     variant="outlined" type='text' label='Enter Qr Pin' onChange={(e) =>setQrPin(e.target.value)} />
+                                    
+                                    </div>
                                     
                                     
                                     <Button className='btn p-text' variant="outlined" 
@@ -419,6 +546,52 @@ const TableCard = ({searched,sort}) => {
                                 </div>
                                 )
                             }
+                            {
+                                groupModal && (
+                                    <div className='modal' >
+
+                                    <div className='overlay' onClick={toggleGroupModal} ></div>
+                                    <div className='modal-content_qr' >
+                                     <Button onClick={toggleGroupModal} style={{marginLeft:'425px',paddingLeft:'40px'}} ><MdClose style={{color:'#313bac',height:'1.2rem',width:'1.3rem'}}  /></Button>
+                                    <form onSubmit={handleGroupSubmit} className='app__form_qr' >
+                                    <h3 className='head-text' style={{fontSize:'1.5rem'}} >Add/Edit <span>Group</span> </h3>
+                                    Group<select  className='select-long' onChange={e=>{
+                                        setGroupName(e.target.value)
+                                        setGroupId(e.target.children[e.target.selectedIndex].getAttribute('group-id'))
+                                        setGroupSelect(true)
+                                        }} label='groups' >
+                                        <option value="" disabled selected >All</option>
+                                        {
+                                            allGroups.map((group) => {
+                                                return(
+                                                <option key={group._id} group-id={group._id} >{group.groupName}</option>
+                                            )})
+                                        }
+                                    </select>
+
+                                    <h3 style={{marginLeft:'45%',marginTop:'10px'}} >OR</h3>
+                                    <h3 className='head-text' style={{fontSize:'1.4rem',marginTop:'10px'}} >Create A <span>New</span> Group </h3>
+                                        <TextField style={{marginTop:'20px',width:'400px',marginLeft:'10px'}} onChange={e => setGroupName(e.target.value)}  className='form__text' id="outlined-basic" 
+                                        variant="outlined" label='Enter Group Name' type='text'  />
+                                        <TextField style={{marginTop:'20px',width:'400px',marginLeft:'10px'}} onChange={e=>setGroupDescription(e.target.value)} className='form__text' id="outlined-basic" 
+                                        variant="outlined" type='text' label='Enter Group Description'  />
+                                        <label style={{marginLeft:'10px',marginTop:'20px'}} ><h4>Start and End Date</h4></label>
+                                        <div style={{marginBottom:'10px'}} >
+                                            <input type='date' min="1997-01-01" max="2030-12-31" placeholder='from' style={{width:'40%'}} label='from' onChange={e=>setGstartDate(e.target.value)} className='date-time-ip' />
+                                            <input type='date' min="1997-01-01" max="2030-12-31" placeholder='to' style={{width:'40%'}} label='to' onChange={e=>setGendDate(e.target.value)} className='date-time-ip' />
+                                        </div>
+                                        
+                                        <Button className='btn p-text' variant="outlined" 
+                                        style={{width:'100px',margin:'auto',marginTop:'20px',marginRight:'40%'}}  type='submit'
+                                        
+                                        >
+                                            Submit   
+                                        </Button>
+                                    </form>
+                                    </div> 
+                                    </div>
+                                    )
+                            }
                         </>
                     )}
                     )
@@ -427,7 +600,20 @@ const TableCard = ({searched,sort}) => {
                 }
             </div>
         </div>
-        <PaginationComponents style={{marginTop:'25px'}} postsPerPage={postsPerPage} paginate={paginate} totalPosts={datas.length} />
+        <div>
+            <nav  >
+            <ReactPaginate 
+                pageCount={pageCount} 
+                previousLabel={'previous'} 
+                nextLabel={'next'} 
+                breakLabel={'...'} 
+                onPageChange={handlePageChange} 
+                containerClassName={'pagination'}
+                marginPagesDisplayed={3}
+                activeClassName={'active'}
+                />
+            </nav>
+        </div>       
     </div>
   )
 }

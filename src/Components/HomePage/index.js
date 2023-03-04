@@ -146,6 +146,11 @@ const HomePage = () => {
                                 <option>Yes</option>
                                 <option>No</option>
                             </select>
+                            <label style={{marginLeft:'10px'}} >Registration Date</label>
+                            <div style={{marginBottom:'10px'}} >
+                                <input type='date' placeholder='from' style={{width:'40%'}} label='from' className='date-time-ip' />
+                                <input type='date' placeholder='to' style={{width:'40%'}} label='to' className='date-time-ip' />
+                            </div>
                             
                             <Button className='close-modal' style={{marginLeft:'30%',backgroundColor:'#313bac',color:'white',width:'150px'}}  >Apply</Button>
                         </div>
