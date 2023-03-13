@@ -2,7 +2,7 @@ import React from 'react'
 import {HiMenuAlt4,HiX} from 'react-icons/hi'
 import {motion} from 'framer-motion'
 import { useState } from 'react'
-import safe from '../assets/safe.png' 
+import safe from '../assets/Footer.png' 
 import './style.scss'
 
 
@@ -15,7 +15,8 @@ const Navbar = () => {
             {/* <div className='app__navSafe'>
                 <img  src={safe} alt='weSafe' />
             </div> */}
-            <h2><a href='#' style={{textDecoration:'none',color:'black'}} > PartnersPortal</a></h2>
+            
+            <h2> <img src={safe} alt='weSafe' style={{height:'1.6rem',verticalAlign:'middle'}} /> <a href='#' style={{textDecoration:'none',color:'black',marginLeft:'10px'}} > PartnersPortal</a></h2>
         </div>
         <ul className='app__navbar-links'>
             {

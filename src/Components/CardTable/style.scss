@@ -140,6 +140,38 @@
     min-width: 300px;
   }
   
+  .modal-content_group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 1.4;
+    background: #f1f1f1;
+    padding: 14px 28px;
+    border-radius: 3px;
+    max-width: 600px;
+    min-width: 300px;
+  }
+  
+  .modal-content_doc {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 0.5;
+    background: #f1f1f1;
+    padding: 10px 20px;
+    border-radius: 3px;
+    max-width: 600px;
+    min-width: 300px;
+  }
+
   .close-modal {
     position: absolute;
     top: 10px;
@@ -159,6 +191,15 @@
     display: grid;
     margin: auto;
 }
+
+.app__form_doc{
+  padding-top: 15px;
+  padding-bottom: 10px;
+  align-items: center;
+  display: grid;
+  margin: auto;
+}
+
 .app__form_qr{
   padding-top: 15px;
   align-items: center;
@@ -248,4 +289,10 @@ nav {
   
 .active{
   border: 1px solid white;
+}
+
+.md_close{
+  :hover{
+    background: none;
+  }
 }

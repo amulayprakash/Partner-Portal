@@ -95,11 +95,47 @@ body.active-modal {
   background: rgba(49,49,49,0.8);
 }
 .modal-content {
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   position: absolute;
   top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 1.4;
+  background: #f1f1f1;
+  padding: 14px 28px;
+  border-radius: 3px;
+  max-width: 600px;
+  min-width: 300px;
+}
+
+
+
+.modal-content_filter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 1.4;
+  background: #f1f1f1;
+  padding: 14px 28px;
+  border-radius: 3px;
+  max-width: 600px;
+  min-width: 300px;
+}
+
+
+.modal-content_customer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   line-height: 1.4;
@@ -127,3 +163,6 @@ body.active-modal {
   input:focus::-webkit-datetime-edit{ color: #000; }
 }
 
+
+input[value=""]::-webkit-datetime-edit{ color: transparent; }
+input:focus::-webkit-datetime-edit{ color: #000; }

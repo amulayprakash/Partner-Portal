@@ -1,0 +1,219 @@
+customers: [
+{
+_id: "63f49f11ce1cbdbbda1ac2a9",
+name: "aditya",
+address: "home",
+dob: "2001-02-19T00:00:00.000Z",
+partnerUid: "7ocUlGvJ22l4O1gbfg0p",
+gender: "male",
+qrStatus: [
+{
+id: "1902",
+pin: "9279",
+_id: "63f4adffd25907e169c13086"
+},
+{
+id: "1902",
+pin: "9279",
+_id: "63f4ae4c49d5497945b0c8f1"
+},
+{
+id: "2001",
+pin: "8181",
+_id: "63f4b075f208e7e1ea1849be"
+}
+],
+groups: [
+{
+groupName: "Manali Trip 22-04-23",
+groupId: "63f35faa7489ecab7272f12a",
+destination: "Manali",
+startDate: "2023-04-22T00:00:00.000Z",
+endDate: "2023-04-28T00:00:00.000Z",
+_id: "63f4b279d6404d15851fe9e1"
+}
+],
+childList: [
+{
+childHash: "biy76QRnrzGFcRWMe9V6",
+_id: "63f4af7df208e7e1ea18499e"
+},
+{
+_id: "63f4b04cf208e7e1ea1849aa"
+},
+{
+childHash: "biy76QRnrzGFcRWMe9V6",
+_id: "63f4b0bff208e7e1ea1849d0"
+}
+],
+__v: 0,
+userUid: "1285lnZSuF19C0w3KNy0",
+customerGroups: [
+{
+_id: "63f89f95a23d74fa12c126a9",
+customerId: "63f49f11ce1cbdbbda1ac2a9",
+groupId: "63f7255c46eb9925f07e7aa9",
+groupName: "Turkey2023",
+groupDescription: "fun turkey trip 2023",
+startDate: "2023-04-22T00:00:00.000Z",
+endDate: "2023-04-28T00:00:00.000Z",
+__v: 0
+},
+{
+_id: "63f8a282a23d74fa12c1295b",
+customerId: "63f49f11ce1cbdbbda1ac2a9",
+groupId: "63f8a230a23d74fa12c12958",
+groupName: "France2023",
+groupDescription: "fun france trip 2023",
+startDate: "2023-07-22T00:00:00.000Z",
+endDate: "2023-07-30T00:00:00.000Z",
+__v: 0
+}
+],
+customerQrs: [
+{
+_id: "63fd921eda2ee58a9e32c3af",
+customerId: "63f49f11ce1cbdbbda1ac2a9",
+qrId: "3029",
+qrPin: "3107",
+__v: 0
+},
+{
+_id: "63fe0033be86679ed7190025",
+customerId: "63f49f11ce1cbdbbda1ac2a9",
+qrId: "5837",
+qrPin: "3107",
+__v: 0
+}
+],
+customerDocs: [
+{
+_id: "63f4acbae8909890fa01de00",
+customerHash: "1285lnZSuF19C0w3KNy0",
+name: "collegeId",
+document: {
+data: "MTY3Njk3OTM4NjE1NmlkLnBkZg==",
+contentType: "application/pdf"
+},
+timeStamp: "2023-02-21T11:36:04.615Z",
+__v: 0,
+customerId: "63f49f11ce1cbdbbda1ac2a9"
+},
+{
+_id: "63f4b679b834e614d408de9e",
+customerHash: "1285lnZSuF19C0w3KNy0",
+name: "application",
+document: {
+data: "MTY3Njk4MTg4MTYxNUNUMjAyMjM5MjA0NDlfQXBwbGljYXRpb24ucGRm",
+contentType: "application/pdf"
+},
+timeStamp: "2023-02-21T12:17:49.152Z",
+__v: 0,
+customerId: "63f49f11ce1cbdbbda1ac2a9"
+},
+{
+_id: "63f515ff3ccc2e17bd6f70b4",
+customerHash: "1285lnZSuF19C0w3KNy0",
+name: "application",
+description: "uploading the same file again with description ",
+document: {
+data: "MTY3NzAwNjMzNTgwOUNUMjAyMjM5MjA0NDlfQXBwbGljYXRpb24ucGRm",
+contentType: "application/pdf"
+},
+timeStamp: "2023-02-21T19:05:06.807Z",
+__v: 0,
+customerId: "63f49f11ce1cbdbbda1ac2a9"
+}
+]
+},
+{
+_id: "63f5c7397ce0f94f57fe3dfe",
+name: "aditya bajpai",
+address: "home2",
+dob: "2001-02-19T00:00:00.000Z",
+partnerUid: "7ocUlGvJ22l4O1gbfg0p",
+userUid: "no1234",
+gender: "male",
+bloodGroup: "A+",
+qrStatus: [ ],
+groups: [ ],
+childList: [ ],
+__v: 0,
+customerGroups: [
+{
+_id: "6401a9d3981071d14fbf548c",
+customerId: "63f5c7397ce0f94f57fe3dfe",
+groupId: "63f8a230a23d74fa12c12958",
+groupName: "France2023",
+__v: 0
+}
+],
+customerQrs: [
+{
+_id: "63ff3e5fa0556273fa1139c2",
+customerId: "63f5c7397ce0f94f57fe3dfe",
+qrId: "1",
+qrPin: "2",
+__v: 0
+},
+{
+_id: "63ff3e83a0556273fa1139d5",
+customerId: "63f5c7397ce0f94f57fe3dfe",
+qrId: "1902",
+qrPin: "1998",
+__v: 0
+}
+],
+customerDocs: [
+{
+_id: "640083f85a86584be287b03f",
+customerId: "63f5c7397ce0f94f57fe3dfe",
+name: "doc1234",
+description: "new doc ",
+document: {
+data: "MTY3Nzc1NTM4NDIwNDE5QkVFMDMzMF9WTDIwMjEyMjA3MDE0MzFfREEwMy5wZGY=",
+contentType: "application/pdf"
+},
+timeStamp: "2023-03-02T10:51:22.161Z",
+__v: 0
+},
+{
+_id: "6400948257ba0d78f313b0a8",
+customerId: "63f5c7397ce0f94f57fe3dfe",
+name: "docToBeDeleted",
+description: "tags",
+document: {
+data: "MTY3Nzc1OTYxODYzOE5GMjlGNlBSQktRMk9UU1owOTIyLkVUaWNrZXQucGRm",
+contentType: "application/pdf"
+},
+timeStamp: "2023-03-02T11:42:23.224Z",
+__v: 0
+}
+]
+},
+{
+_id: "63f5c9c76abefebd5e82f7fa",
+name: "aditya bajpai",
+address: "home2",
+dob: "2001-02-19T00:00:00.000Z",
+partnerUid: "7ocUlGvJ22l4O1gbfg0p",
+userUid: "457617",
+gender: "male",
+bloodGroup: "A+",
+qrStatus: [ ],
+groups: [ ],
+childList: [ ],
+__v: 0,
+customerGroups: [
+{
+_id: "6402daf88a7df5c732b3d0c9",
+customerId: "63f5c9c76abefebd5e82f7fa",
+groupId: "6402daf88a7df5c732b3d0c7",
+groupName: "Test",
+groupDescription: "Irelasn",
+partnerUid: "7ocUlGvJ22l4O1gbfg0p",
+startDate: "2023-03-24T00:00:00.000Z",
+endDate: "2023-03-31T00:00:00.000Z",
+__v: 0
+}
+],
