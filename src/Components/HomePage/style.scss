@@ -6,7 +6,7 @@
     text-transform: capitalize;
   
     span {
-      color: var(--secondary-color);
+      color: #0502b193;
     }
   
     @media screen and (min-width: 2000px) {
@@ -144,6 +144,8 @@ body.active-modal {
   border-radius: 3px;
   max-width: 600px;
   min-width: 300px;
+
+
 }
 
 .close-modal {
@@ -158,11 +160,36 @@ body.active-modal {
   margin: 10px;
 }
 
-.date-time-ip{
-  input[value=""]::-webkit-datetime-edit{ color: transparent; }
-  input:focus::-webkit-datetime-edit{ color: #000; }
+// input[value=""]::-webkit-datetime-edit{ color: transparent; }
+// input:focus::-webkit-datetime-edit{ color: #000; }
+// input[type=date]::-webkit-datetime-edit-text {
+//   -webkit-appearance: none;
+//   display: none;
+// }
+// input[type=date]::-webkit-datetime-edit-month-field{
+//   -webkit-appearance: none;
+//   display: none;
+// }
+// input[type=date]::-webkit-datetime-edit-day-field {
+//   -webkit-appearance: none;
+//   display: none;
+// }
+// input[type=date]::-webkit-datetime-edit-year-field {
+//   -webkit-appearance: none;
+//   display: none;
+// }
+// input[type="date"]:not(.has-value):before{
+//   color: lightgray;
+//   content: attr(placeholder);
+// }
+input[type=date] {
+  text-align: right;
 }
 
+input[type="date"]:before {
+  color: gray;
+  font-size: 0.9rem;
+  content: attr(placeholder) !important;
+  margin-right: 0.5em;
+}
 
-input[value=""]::-webkit-datetime-edit{ color: transparent; }
-input:focus::-webkit-datetime-edit{ color: #000; }

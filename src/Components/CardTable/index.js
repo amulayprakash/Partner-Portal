@@ -9,6 +9,7 @@ import PaginationComponents from '../PaginationComponent'
 import { TextField } from '@mui/material'
 import ReactPaginate from 'react-paginate'
 import { group } from 'console'
+import {Map,GoogleApiWrapper} from 'google-maps-react' 
 import safe from '../assets/safe.png' 
 //replace groups by cusgroups
 
@@ -21,6 +22,7 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
     const [docModal, setDocModal] = useState(false)
     const [qrModal, setQrModal] = useState(false)
     const [groupModal,setGroupModal]=useState(false)
+    const [lastScannedQrModal, setLastScannedQrModal] = useState(false)
     const [multiSelect, setMultiSelect] = useState(false)
 
     const [allGroups, setAllGroups] = useState([])
@@ -41,6 +43,16 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
     const [qrPin, setQrPin] = useState('')
     
     const [custId,setCustId]=useState('')
+
+    const [deleteDoc, setDeleteDoc] = useState(false)
+    const [deleteQr, setdeleteQr] = useState(false)
+    const [deleteUser, setDeleteUser] = useState(false)
+
+    const [docId,setDocId]=useState('')
+    const [qrdeleteId,setqrdeleteId]=useState('')
+    const [deleteUserId, setDeleteUserId] = useState('')
+
+    const [scanHistory,setScanHistory]=useState(null)
 
     const navigate=useNavigate()
     const excludedColumns=['_id']
@@ -95,27 +107,27 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
         }
     },[searched])
 
-    useEffect(() => {
-        if(sort)
-            setData(datas.sort((a,b) => a.name.localeCompare(b.name)))
-        else{
-            const getData=async() => {
-                setLoading(true)
-                try {
-                    await axios.get("https://we-safe-partner-portal-backend1.onrender.com/customerData").then(res=> {
-                        setData(res.data.customers)
-                        setLoading(false)
-                    }).catch(err => {
-                        console.log(err.message)
-                    }) 
-                } catch (error) {
-                    console.log(error.message)
-                }
-            }
-            getData()
-        }
-        navigate("/")
-    },[sort])
+    // useEffect(() => {
+    //     if(sort)
+    //         setData(datas.sort((a,b) => a.name.localeCompare(b.name)))
+    //     else{
+    //         const getData=async() => {
+    //             setLoading(true)
+    //             try {
+    //                 await axios.get("https://we-safe-partner-portal-backend1.onrender.com/customerData").then(res=> {
+    //                     setData(res.data.customers)
+    //                     setLoading(false)
+    //                 }).catch(err => {
+    //                     console.log(err.message)
+    //                 }) 
+    //             } catch (error) {
+    //                 console.log(error.message)
+    //             }
+    //         }
+    //         getData()
+    //     }
+    //     navigate("/")
+    // },[sort])
 
     //for getting all groups
     useEffect(() => {
@@ -138,10 +150,17 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
     const handleDocDeleteClick=async(id) => {
         axios.delete(`https://we-safe-partner-portal-backend1.onrender.com/doc/${id}`).then(res=> {
             console.log(res)
+            setDocId('')
+            toggleDeleteDoc()
             window.location.reload()
         }).catch(err => {
             console.log(err.message)
+            setDocId('')
+            toggleDeleteDoc()
         })
+        
+        // console.log(id)
+        setDocId('')
         navigate("/")
     }
 
@@ -313,21 +332,31 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
     const handleQrDeleteClick=async(id) => {
         axios.delete(`https://we-safe-partner-portal-backend1.onrender.com/qr/${id}`).then(res=> {
             console.log(res)
+            setqrdeleteId('')
+            toggleDeleteQr()
             window.location.reload()
         }).catch(err => {
             console.log(err.message)
+            setqrdeleteId('')
+            toggleDeleteQr()
         })
         navigate("/")
+        setqrdeleteId('')
     }
 
     //delete a customer
     const deleteCustomer=async(id) => {
         axios.delete(`https://we-safe-partner-portal-backend1.onrender.com/customer/${id}`).then(res => {
             console.log(res)
+            setDeleteUserId('')
+            toggleDeleteCustomer()
+            window.location.reload()
         }).catch(err => {
             console.log(err.message)
+            setDeleteUserId('')
+            toggleDeleteCustomer()
         })
-        window.location.reload()
+        navigate("/")
     }
 
     //to assign document tags
@@ -431,7 +460,23 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
     const toggleGroupModal=() => {
         setGroupModal(!groupModal)
     }
+
+    const toggleDeleteDoc=() => {
+        setDeleteDoc(!deleteDoc)
+    }
+
+    const toggleDeleteQr=() => {
+        setdeleteQr(!deleteQr)    
+    }
     
+    const toggleDeleteCustomer=() => {
+        setDeleteUser(!deleteUser)
+    }
+
+    const toggleLastScannedQrModal=() => {
+        setLastScannedQrModal(!lastScannedQrModal)
+    }
+
     //fetching paginatedd api contd
     const handlePageChange=(data) => {
         let curPage=data.selected+1
@@ -455,6 +500,13 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
         
     }
    
+    //google maps api
+    
+    const openMap=async(myLat,myLng) => {
+        window.open(`https://maps.google.com/maps?q=${myLat},${myLng}&hl=es;&output=embed`)
+        //<iframe src={`https://maps.google.com/maps?q=${myLat},${myLng}&hl=es;&output=embed`} height='500px' width='100%' ></iframe>
+    }
+
     // console.log(newData)
     
    return (
@@ -486,8 +538,8 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
             <div className='row' >
                 
                 {
-                
-                newData.map((data,index) =>{
+                !loading?                    
+                (newData.map((data,index) =>{
                         return(
                         <>
                             <div key={data._id} className="column">
@@ -567,16 +619,21 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                             data?.customerDocs?.map((doc) => {
                                                 const openPdf=() => {
                                                     let base64String=doc.document?.data
-                                                    window.open("data:application/pdf," + encodeURI(base64String))
+                                                    let contentType=doc.document?.data?.contentType
+                                                    // window.open("data:application/pdf," + encodeURI(base64String))
                                                     // const file=new Blob([new Uint8Array(doc.document?.data)],{type:doc.document?.contentType})
                                                     // window.open(file)
+                                                    const file=new Blob([new Uint8Array(base64String)],{type:contentType})
+                                                    window.open(file)
                                                 }
                                                 return(
                                                 <div key={doc._id} style={{marginTop:'2px'}} >
-                                                   <div style={{textDecoration:'underline'}} onClick={openPdf} ><a   > {doc.name}</a><span> 
+                                                   <div style={{textDecoration:'underline'}}  ><a onClick={openPdf}  > {doc.name}</a><span> 
                                                     <MdDeleteForever onClick={e=>
                                                         {   e.preventDefault()
-                                                            handleDocDeleteClick(doc._id)
+                                                            // handleDocDeleteClick(doc._id)
+                                                            setDocId(doc._id)
+                                                            toggleDeleteDoc()
                                                         }}
                                                     style={{verticalAlign:'middle',color:'red',marginLeft:'20px'}} /> 
                                                     </span>
@@ -600,18 +657,41 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                                     
                                     {
                                         (data?.customerQrs?.length>0)?(
+                                            
                                             data?.customerQrs?.map((qr) => (
                                                 <div key={qr._id} >
                                                     <div style={{marginTop:'2px'}} >{qr.qrId} - <span> {qr.qrPin}</span> <span> 
                                                         <MdDeleteForever onClick={e=>
                                                         {   e.preventDefault()
-                                                            handleQrDeleteClick(qr._id)
+                                                            setqrdeleteId(qr._id)
+                                                            toggleDeleteQr()
+                                                            //handleQrDeleteClick(qr._id)
                                                         }} style={{verticalAlign:'bottom',color:'red'}} /> </span>
                                                     </div>
                                                 </div>
                                             ))
                                         ):(
                                             <div style={{color:'red',marginTop:'15%'}} >No QR Code Assigned Yet</div> 
+                                        )
+                                    }
+                                    {
+                                        data?.lastScanned?.length>0 ? (
+                                            <>
+                                            <div style={{display:'flex',paddingTop:'5px' }} >
+                                                <h3>Scans  </h3> <span><a style={{fontSize:'1rem',verticalAlign:'bottom',marginLeft:'3px'}} href="" onClick={(e) => {
+                                                        e.preventDefault()
+                                                        toggleLastScannedQrModal()
+                                                        setScanHistory(data?.lastScanned)
+                                                    }
+                                                }  >[See All Scans]</a> </span>
+                                            </div>
+                                            <div>
+                                                <h4>Latest Scan</h4>
+                                                {data.lastScanned[0].datetime.substring(0,10)}, <span> {data.lastScanned[0].timestamp} </span> <span> <a href="" onClick={() => openMap(data?.lastScanned[0]?.latitude,data.lastScanned[0].longitude)} >[Go to Map] </a> </span>
+                                            </div>
+                                            </>
+                                        ):(
+                                            <></>
                                         )
                                     }
                                     </div>    
@@ -656,8 +736,11 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                     <div>
                                         <Button style={{color:'white',borderRadius:'5px',
                                         backgroundColor:'#8b1010',width:'140px',height:'25px',margin:'10px'}}
-                                            onClick={()=>{
-                                                deleteCustomer(data._id)    
+                                            onClick={(e)=>{
+                                                e.preventDefault()
+                                                setDeleteUserId(data._id)
+                                                toggleDeleteCustomer()
+                                                // deleteCustomer(data._id)    
                                             }}
                                         >
                                             Delete User
@@ -674,21 +757,21 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                <MdClose onClick={toggleDocModal} style={{color:'#313bac',height:'1.2rem',width:'1.3rem',marginLeft:'500px',marginBottom:'10px'}}  />
                                 <form onSubmit={handleDocSubmit} className='app__form_doc' >
                                 <h3 className='head-text' style={{fontSize:'1.5rem'}} >Upload The <span>Required</span> Document</h3>
-                                    <TextField style={{marginTop:'20px',width:'500px',marginLeft:'30px'}}  className='form__text' id="outlined-basic" 
+                                    <TextField style={{marginTop:'25px',width:'500px'}}  className='form__text' id="outlined-basic" 
                                     variant="outlined" type='file' onChange={(e) =>setFilename(e.target.files[0])} />
                                     <div>
-                                    <TextField style={{marginTop:'20px',width:'240px',marginLeft:'30px'}}  className='form__text' id="outlined-basic" 
+                                    <TextField style={{marginTop:'20px',width:'240px',}}  className='form__text' id="outlined-basic" 
                                     variant="outlined" label='Name of Document' type='text' onChange={(e) =>setName(e.target.value)} />
                                     <TextField style={{marginTop:'20px',width:'240px',marginLeft:'20px'}}  className='form__text' id="outlined-basic" 
                                     variant="outlined" label='Tags' type='text' onChange={e=>handleDocTags(e.target.value)} />
                                     </div>
                                     
-                                    <TextField style={{marginTop:'20px',width:'500px',marginLeft:'30px'}}  className='form__text' id="outlined-basic" 
+                                    <TextField style={{marginTop:'20px',width:'500px',}}  className='form__text' id="outlined-basic" 
                                     variant="outlined" type='text' label='Description' onChange={(e) =>setDescription(e.target.value)} />
                                     
                                     
                                     <Button className='btn p-text' variant="outlined" 
-                                    style={{width:'100px',margin:'auto',marginTop:'20px',marginRight:'45%'}}  type='submit'
+                                    style={{width:'100px',margin:'auto',marginTop:'20px'}}  type='submit'
                                     
                                     >
                                         Submit   
@@ -827,16 +910,16 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                     <MdClose  onClick={toggleMultiDocModal} style={{color:'#313bac',height:'1.2rem',width:'1.3rem',marginLeft:'500px'}}  />
                                     <form onSubmit={handleMultiDocSubmit} className='app__form_doc' >
                                     <h3 className='head-text' style={{fontSize:'1.5rem'}} >Upload The <span>Required</span> Document</h3>
-                                        <TextField style={{marginTop:'25px',width:'500px',marginLeft:'20px'}}  className='form__text' id="outlined-basic" 
+                                        <TextField style={{marginTop:'25px',width:'500px'}}  className='form__text' id="outlined-basic" 
                                         variant="outlined" type='file' onChange={(e) =>setFilename(e.target.files[0])} />
                                         <div>
-                                        <TextField style={{marginTop:'20px',width:'240px',marginLeft:'20px'}}  className='form__text' id="outlined-basic" 
+                                        <TextField style={{marginTop:'20px',width:'240px'}}  className='form__text' id="outlined-basic" 
                                         variant="outlined" label='Name of Document' type='text' onChange={(e) =>setName(e.target.value)} />
                                         <TextField style={{marginTop:'20px',width:'240px',marginLeft:'20px'}}  className='form__text' id="outlined-basic" 
                                         variant="outlined" label='Tags' type='text' onChange={e=>handleDocTags(e.target.value)} />
                                         </div>
                                         
-                                        <TextField style={{marginTop:'20px',width:'500px',marginLeft:'20px'}}  className='form__text' id="outlined-basic" 
+                                        <TextField style={{marginTop:'20px',width:'500px'}}  className='form__text' id="outlined-basic" 
                                         variant="outlined" type='text' label='Description' onChange={(e) =>setDescription(e.target.value)} />
                                         
                                         
@@ -851,8 +934,123 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                     </div>
                                 )
                             }
+                            {
+                                deleteDoc && (
+                                    <div className='modal' >
+                                
+                                        <div className='overlay' onClick={toggleDeleteDoc} ></div>
+                                        <div>
+                                        <form onSubmit={(e) =>{
+                                            e.preventDefault()
+                                            handleDocDeleteClick(docId)
+                                        }} className='modal-content' >
+                                        <MdClose onClick={toggleDeleteDoc} style={{color:'#313bac',height:'1.2rem',width:'1.3rem',marginLeft:'430px',marginTop:'5px',marginBottom:'5px'}}  />
+                                        <h3 style={{margin:'auto',marginTop:'10px'}} >Are you sure you want to delete this document?</h3>
+                                        <Button className='btn p-text close-modal' variant="outlined" 
+                                        style={{width:'150px',margin:'auto',marginTop:'30px',backgroundColor:'#8b1010',color:'white',marginBottom:'20px'}}  type='submit'>
+                                            Yes   
+                                        </Button>
+                                        
+                                        </form>
+                                        
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            {
+                                deleteQr && (
+                                    <div className='modal' >
+                                
+                                        <div className='overlay' onClick={toggleDeleteQr} ></div>
+                                        <div>
+                                        <form onSubmit={(e) =>{
+                                            e.preventDefault()
+                                            handleQrDeleteClick(qrdeleteId)
+                                        }} className='modal-content' >
+                                        <MdClose onClick={toggleDeleteQr} style={{color:'#313bac',height:'1.2rem',width:'1.3rem',marginLeft:'430px',marginTop:'5px',marginBottom:'5px'}}  />
+                                        <h3 style={{margin:'auto',marginTop:'10px'}} >Are you sure you want to delete this QR?</h3>
+                                        <Button className='btn p-text close-modal' variant="outlined" 
+                                        style={{width:'150px',margin:'auto',marginTop:'30px',backgroundColor:'#8b1010',color:'white',marginBottom:'20px'}}  type='submit'>
+                                            Yes   
+                                        </Button>
+                                        
+                                        </form>
+                                        
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            {
+                                deleteUser && (
+                                    <div className='modal' >
+                                
+                                        <div className='overlay' onClick={toggleDeleteCustomer} ></div>
+                                        <div>
+                                        <form onSubmit={(e) =>{
+                                            e.preventDefault()
+                                            deleteCustomer(deleteUserId)
+                                        }} className='modal-content' >
+                                        <MdClose onClick={toggleDeleteCustomer} style={{color:'#313bac',height:'1.2rem',width:'1.3rem',marginLeft:'430px',marginTop:'5px',marginBottom:'5px'}}  />
+                                        <h3 style={{margin:'auto',marginTop:'10px'}} >Are you sure you want to delete the Selected User?</h3>
+                                        <Button className='btn p-text close-modal' variant="outlined" 
+                                        style={{width:'150px',margin:'auto',marginTop:'30px',backgroundColor:'#8b1010',color:'white',marginBottom:'20px'}}  type='submit'>
+                                            Yes   
+                                        </Button>
+                                        
+                                        </form>
+                                        
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            {
+                                    lastScannedQrModal && (
+                                        <div className='modal' >
+
+                                            <div className='overlay' onClick={toggleLastScannedQrModal} ></div>
+                                            <div className='modal-content_qrscan'>
+                                                <MdClose onClick={toggleLastScannedQrModal} style={{color:'#313bac',height:'1.2rem',width:'1.3rem',marginLeft:'900px',marginTop:'5px',marginBottom:'5px'}}  />
+                                            {/* <form onSubmit={(e) =>{
+                                                e.preventDefault()
+                                                deleteCustomer(deleteUserId)
+                                            }} className='modal-content' >
+                                            <MdClose onClick={toggleDeleteCustomer} style={{color:'#313bac',height:'1.2rem',width:'1.3rem',marginLeft:'430px',marginTop:'5px',marginBottom:'5px'}}  />
+                                            <h3 style={{margin:'auto',marginTop:'10px'}} >Are you sure you want to delete the Selected User?</h3>
+                                            <Button className='btn p-text close-modal' variant="outlined" 
+                                            style={{width:'150px',margin:'auto',marginTop:'30px',backgroundColor:'#8b1010',color:'white',marginBottom:'20px'}}  type='submit'>
+                                                Yes   
+                                            </Button>
+                                            
+                                            </form> */}
+                                            <div style={{margin:'auto',marginBottom:'10px'}} >
+                                                <h3  >Customer Scan Details</h3>
+                                            </div>
+                                            {   
+                                                scanHistory?.map((history,index) => (
+                                                    <>
+                                                        <div style={{display:'flex',marginTop:'3px'}} >
+                                                            <h4 style={{paddingTop:'3px'}} >{index+1}</h4>
+                                                            <h3 style={{marginLeft:'20px'}}>Date: </h3> <h4 style={{marginLeft:'10px',paddingTop:'3px'}} > {history.datetime.substring(0,10)}</h4>
+                                                            <h3 style={{marginLeft:'20px'}}>Time: </h3> <h4 style={{marginLeft:'10px',paddingTop:'3px'}} > {history.timestamp}</h4>
+                                                            <h3 style={{marginLeft:'20px'}}>Lat: </h3><h4 style={{marginLeft:'10px',paddingTop:'3px'}} > {history.latitude}</h4>
+                                                            <h3 style={{marginLeft:'20px'}}>Lng:</h3><h4 style={{marginLeft:'10px',paddingTop:'3px'}} >  {history.longitude}</h4>
+                                                            <h3 style={{marginLeft:'20px'}}>QR Code:</h3><h4 style={{marginLeft:'10px',paddingTop:'3px'}} > {history.qrcode}</h4>
+                                                            <a style={{marginLeft:'20px',paddingTop:'2px'}} href='' onClick={() => openMap(history.latitude,history.longitude)} >Click To View</a>
+                                                        </div>
+                                                    </>
+                                                ))
+                                            }
+                                            </div>
+                                        </div>
+                                    )
+                            }
                         </>
                     )}
+                    )):
+                    (
+                        <>
+                            <div style={{marginTop:'20px'}} class="loader"></div>
+                        </>
                     )
                 
                     

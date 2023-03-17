@@ -36,7 +36,7 @@
     opacity: 80%;
     border: 1px solid gray;
   
-    background-color:rgb(18, 77, 212);
+    background-color:#0502b193;
     color:white;
     }
 
@@ -122,6 +122,22 @@
     border-radius: 3px;
     max-width: 600px;
     min-width: 300px;
+  }
+
+  .modal-content_qrscan{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 1.4;
+    background: #f1f1f1;
+    padding: 14px 28px;
+    border-radius: 3px;
+    max-width: 1000px;
+    min-width: 950px;
   }
   
   .modal-content_qr {
@@ -295,4 +311,19 @@ nav {
   :hover{
     background: none;
   }
+}
+
+.loader {
+  margin: auto;
+  border: 10px solid #EAF0F6;
+  border-radius: 50%;
+  border-top: 10px solid #0502b193;
+  width: 75px;
+  height: 75px;
+  animation: spinner 4s linear infinite;
+}
+
+@keyframes spinner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
