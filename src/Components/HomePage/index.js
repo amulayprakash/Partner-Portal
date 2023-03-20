@@ -212,10 +212,10 @@ const HomePage = () => {
                     <div style={{paddingBottom:'25px'}}  >
                         {/* <Button style={{marginLeft:'100px',width:'160px',border:'1px solid blue' ,marginTop:'20px'}} onClick={sortChange} >Sort <span><MdSort style={{marginLeft:'5px'}} /> </span></Button> */}
                         <Button style={{marginLeft:'100px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleModal} >Filter <span><MdFilterListAlt style={{marginLeft:'5px'}} /> </span> </Button>
-                        <Button style={{marginLeft:'75px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleAddToGroup} >Assign Group <span><MdOutlineAssignmentInd style={{verticalAlign:'middle',marginLeft:'5px'}}/></span> </Button>
-                        <Button style={{marginLeft:'75px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleMultiDocModal} >Add Documents <span><MdUploadFile style={{marginLeft:'5px'}} /> </span> </Button>
-                        <Button  style={{marginLeft:'75px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleCustomerModal} > Add Customer <span><MdAdd style={{marginLeft:'5px'}} /> </span></Button>
-                        <input placeholder='search' onChange={(e) => setSearch(e.target.value)} style={{marginTop:'30px',verticalAlign:'bottom',width:'250px',height:'40px',marginLeft:'75px'}} />
+                        <Button style={{marginLeft:'150px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleAddToGroup} >Assign Group <span><MdOutlineAssignmentInd style={{verticalAlign:'middle',marginLeft:'5px'}}/></span> </Button>
+                        <Button style={{marginLeft:'150px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleMultiDocModal} >Add Documents <span><MdUploadFile style={{marginLeft:'5px'}} /> </span> </Button>
+                        {/* <Button  style={{marginLeft:'75px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleCustomerModal} > Add Customer <span><MdAdd style={{marginLeft:'5px'}} /> </span></Button> */}
+                        <input placeholder='search' onChange={(e) => setSearch(e.target.value)} style={{marginTop:'30px',verticalAlign:'bottom',width:'250px',height:'40px',marginLeft:'150px'}} />
 
                     </div>
                 </div>
@@ -277,63 +277,51 @@ const HomePage = () => {
                         )
                     }
                     {
-                        customerModal && (
-                                <div className='modal' >
+                        // customerModal && (
+                        //         <div className='modal' >
                                 
-                                <div className='overlay' onClick={toggleCustomerModal} ></div>
-                                <div className='modal-content_customer' >
-                                <form onSubmit={handleCustomerSubmit} className='modal-content' >
-                                <MdClose onClick={toggleCustomerModal} style={{color:'#313bac',height:'1.2rem',width:'1.3rem',marginLeft:'300px',marginTop:'10px',marginBottom:'5px'}}  />
-                                    <h3 className='head-text' style={{fontSize:'1.3rem',margin:'auto'}} >Create A <span>New</span> Customer </h3>
+                        //         <div className='overlay' onClick={toggleCustomerModal} ></div>
+                        //         <div className='modal-content_customer' >
+                        //         <form onSubmit={handleCustomerSubmit} className='modal-content' >
+                        //         <MdClose onClick={toggleCustomerModal} style={{color:'#313bac',height:'1.2rem',width:'1.3rem',marginLeft:'300px',marginTop:'10px',marginBottom:'5px'}}  />
+                        //             <h3 className='head-text' style={{fontSize:'1.3rem',margin:'auto'}} >Create A <span>New</span> Customer </h3>
                             
-                            <input  style={{margin:'auto',width:'300px',marginTop:'10px'}}  className='form__text' id="outlined-basic" 
-                            variant="outlined" type='text' placeholder='Enter Name' 
-                            onChange={(e) =>setName(e.target.value)} 
-                            />
-                            <input  style={{margin:'auto',width:'300px',marginTop:'10px'}}  className='form__text' id="outlined-basic" 
-                            variant="outlined" placeholder='Enter Gender' 
-                            type='text' onChange={(e) =>setgender(e.target.value)} 
-                            />
-                            <input  style={{margin:'auto',width:'300px',marginTop:'10px'}}  className='form__text' id="outlined-basic" 
-                            variant="outlined" type='text' placeholder='Enter Address' 
-                            onChange={(e) =>setAddress(e.target.value)} 
-                            />
-                            <input  style={{margin:'auto',width:'300px',marginTop:'10px'}}  className='form__text' 
-                             type="date" placeholder='Enter DOB' 
-                            onChange={(e) =>setdob(e.target.value)} 
-                            />
-                            <input  style={{margin:'auto',width:'300px',marginTop:'10px'}}  className='form__text' id="outlined-basic" 
-                            variant="outlined" type='text' placeholder='Enter Blood Group' 
-                            onChange={(e) =>setbloodGroup(e.target.value)} 
-                            />
-                            {/* <input  style={{marginTop:'10px'}}  className='form__text' id="outlined-basic" 
-                            variant="outlined" type='text' placeholder='Enter Partner Id' 
-                            onChange={(e) =>setpartnerUid(e.target.value)} 
-                            />
-                            <input  style={{marginTop:'10px'}}  className='form__text' id="outlined-basic" 
-                            variant="outlined" type='text' placeholder='Enter User Uid' 
-                            onChange={(e) =>setuserUid(e.target.value)} 
-                            />
-                            <input  style={{marginTop:'10px'}}  className='form__text' id="outlined-basic" 
-                            variant="outlined" type='text' placeholder='Enter Child List Uid' 
-                            onChange={(e) =>setchildList(e.target.value)}  */}
-                            {/* /> */}
-                            <h3 style={{marginLeft:'45%',marginTop:'10px'}} >OR</h3>
-                            <h4 style={{margin:'auto'}} >Upload <span>Multiple</span> Customers </h4>
-                            <input type='file' onChange={(e) => {
-                                setAddMutliCustomers(true)
-                                setFilename(e.target.files[0])}
-                                }  className='form__text' style={{width:'300px',marginLeft:'18%'}} />
-                            <a style={{margin:'auto',fontSize:'0.8rem',textDecoration:'underline',marginTop:'7px'}} onClick={() =>templateDownload(csvurl)} >Download Customer Template</a>
+                        //     <input  style={{margin:'auto',width:'300px',marginTop:'10px'}}  className='form__text' id="outlined-basic" 
+                        //     variant="outlined" type='text' placeholder='Enter Name' 
+                        //     onChange={(e) =>setName(e.target.value)} 
+                        //     />
+                        //     <input  style={{margin:'auto',width:'300px',marginTop:'10px'}}  className='form__text' id="outlined-basic" 
+                        //     variant="outlined" placeholder='Enter Gender' 
+                        //     type='text' onChange={(e) =>setgender(e.target.value)} 
+                        //     />
+                        //     <input  style={{margin:'auto',width:'300px',marginTop:'10px'}}  className='form__text' id="outlined-basic" 
+                        //     variant="outlined" type='text' placeholder='Enter Address' 
+                        //     onChange={(e) =>setAddress(e.target.value)} 
+                        //     />
+                        //     <input  style={{margin:'auto',width:'300px',marginTop:'10px'}}  className='form__text' 
+                        //      type="date" placeholder='Enter DOB' 
+                        //     onChange={(e) =>setdob(e.target.value)} 
+                        //     />
+                        //     <input  style={{margin:'auto',width:'300px',marginTop:'10px'}}  className='form__text' id="outlined-basic" 
+                        //     variant="outlined" type='text' placeholder='Enter Blood Group' 
+                        //     onChange={(e) =>setbloodGroup(e.target.value)} 
+                        //     />
+                        //     <h3 style={{marginLeft:'45%',marginTop:'10px'}} >OR</h3>
+                        //     <h4 style={{margin:'auto'}} >Upload <span>Multiple</span> Customers </h4>
+                        //     <input type='file' onChange={(e) => {
+                        //         setAddMutliCustomers(true)
+                        //         setFilename(e.target.files[0])}
+                        //         }  className='form__text' style={{width:'300px',marginLeft:'18%'}} />
+                        //     <a style={{margin:'auto',fontSize:'0.8rem',textDecoration:'underline',marginTop:'7px'}} onClick={() =>templateDownload(csvurl)} >Download Customer Template</a>
 
-                            <Button className='btn p-text close-modal' variant="outlined" 
-                            style={{width:'150px',marginTop:'20px',marginLeft:'30%',backgroundColor:'#313bac',color:'white',marginBottom:'20px'}}  type='submit'>
-                                Submit   
-                            </Button>
-                            </form>
-                            </div>
-                        </div>
-                        )
+                        //     <Button className='btn p-text close-modal' variant="outlined" 
+                        //     style={{width:'150px',marginTop:'20px',marginLeft:'30%',backgroundColor:'#313bac',color:'white',marginBottom:'20px'}}  type='submit'>
+                        //         Submit   
+                        //     </Button>
+                        //     </form>
+                        //     </div>
+                        // </div>
+                        // )
                     }
                 
                 </div>

@@ -173,6 +173,11 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                 "Content-Type":"multipart/form-data",
             }
         })
+        // axios.post("http://localhost:1902/upload",{name,filename,description,customerId:custId},{
+        //     headers:{
+        //         "Content-Type":"multipart/form-data",
+        //     }
+        // })
             .then(res => {
                 console.log(res)
                 toggleDocModal()
@@ -192,7 +197,12 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
         
         const dataArr=(JSON.stringify(newData))
 
-        axios.post("https://we-safe-partner-portal-backend1.onrender.com/uploadToMultiCustomers",{name,filename,description,dataArr},{
+        // axios.post("https://we-safe-partner-portal-backend1.onrender.com/uploadToMultiCustomers",{name,filename,description,dataArr},{
+        //     headers:{
+        //         "Content-Type":"multipart/form-data",
+        //     }
+        // })
+        axios.post("http://localhost:1902/uploadToMultiCustomers",{name,filename,description,dataArr},{
             headers:{
                 "Content-Type":"multipart/form-data",
             }
@@ -201,13 +211,16 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                 console.log(res)
                 setMultiSelect(false)
                 toggleMultiDocModal()
-                window.location.reload()
+                if(res.data.message)
+                    // window.location.reload()
+                    console.log(res.data.message)
+                    
             }).catch((err) => {
                 console.log(err.message)
             })
             setMultiSelect(false)
             toggleMultiDocModal()
-            window.location.reload()
+            //window.location.reload()
             navigate("/")
         
     }
@@ -617,14 +630,24 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                         {
                                         (data?.customerDocs?.length>0)?(
                                             data?.customerDocs?.map((doc) => {
-                                                const openPdf=() => {
-                                                    let base64String=doc.document?.data
-                                                    let contentType=doc.document?.data?.contentType
-                                                    // window.open("data:application/pdf," + encodeURI(base64String))
-                                                    // const file=new Blob([new Uint8Array(doc.document?.data)],{type:doc.document?.contentType})
-                                                    // window.open(file)
-                                                    const file=new Blob([new Uint8Array(base64String)],{type:contentType})
-                                                    window.open(file)
+                                                const openPdf=async() => {
+                                                    console.log(atob(doc.document.data))
+                                                    axios.get(`https://we-safe-partner-portal-backend1.onrender.com/getfile/${atob(doc.document.data)}`,{
+                                                        method: "GET",
+                                                        responseType: "blob",
+                                                      })
+                                                    // axios.get(`http://localhost:1902/getfile/${atob(doc.document.data)}`,{
+                                                    //     method: "GET",
+                                                    //     responseType: "blob",
+                                                    //   })
+                                                      .then(res => {
+                                                        console.log(res.data)
+                                                        var file=new Blob([res.data],{type:"application/pdf"})
+                                                        const fileURL=URL.createObjectURL(file)
+                                                        window.open(fileURL)
+                                                    }).catch(err => {
+                                                        console.log(err.message)
+                                                    })
                                                 }
                                                 return(
                                                 <div key={doc._id} style={{marginTop:'2px'}} >
