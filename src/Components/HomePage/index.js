@@ -32,6 +32,8 @@ const HomePage = () => {
     const [qrAssigned,setqrAssigned]=useState('Both')
     const [docsAssigned,setdocsAssigned]=useState('Both')
     const [qrScanData,setqrScanData]=useState('Both')
+    const [registerDateStart, setRegisterDateStart] = useState('from')
+    const [registerDateEnd  , setRegisterDateEnd  ] = useState('to')
     const [name, setName] = useState('')
     const [address,setAddress]=useState('')
     const [dob,setdob]=useState('')
@@ -43,6 +45,8 @@ const HomePage = () => {
     const [addMutliCustomers, setAddMutliCustomers] = useState(false)
     const [filename, setFilename] = useState('')
     const [loggedInUser, setLoggedInUser] = useState(false)
+    const [filterDataDisplayed, setFilterDataDisplayed] = useState(false)
+    const [searchValue, setSearchValue] = useState([])
     const navigate=useNavigate()
     const cookies=new Cookies()
     
@@ -93,6 +97,47 @@ const HomePage = () => {
         getGroups()
     },[])
 
+    //forSearchBar
+    // useEffect(() => {
+    //     const lowerCaseValue=.toLowerCase().trim()
+        
+    //     const getData=async() => {
+    //         try {
+    //             await axios.get(`http://localhost:1902/search?searchKey=${lowerCaseValue}`)
+    //             .then(res=> {
+    //                 setNewData(res.data.customers)
+    //             }).catch(err => {
+    //                 console.log(err.message)
+    //             }) 
+    //         } catch (error) {
+    //             console.log(error.message)
+    //         }         
+    //     }
+    //     if(!lowerCaseValue)
+    //         getData()
+        
+    // },[])
+    const getData=async(lowerCaseValue) => {
+        try {
+            await axios.get(`https://we-safe-partner-portal-backend1.onrender.com/search?searchKey=${lowerCaseValue}`)
+            .then(res=> {
+                setSearchValue(res.data.customers)
+            }).catch(err => {
+                console.log(err.message)
+            }) 
+        } catch (error) {
+            console.log(error.message)
+        }         
+    }
+    
+    const handleSearchSubmit=(e) =>{
+        e.preventDefault()
+        const lowerCaseValue=search.toLowerCase().trim()
+        console.log(lowerCaseValue)
+        getData(lowerCaseValue)
+        
+    }
+    console.log(searchValue)
     // useEffect(() => {
     //     setFilteredData(
     //         datas?.filter((data) => {
@@ -112,15 +157,23 @@ const HomePage = () => {
     const handleFilterSubmit=(e) => {
         e.preventDefault()
         // axios.post(`http://localhost:1902/customerData/filter?groupSelect=${groupSelect}&groupAssigned=${groupAssigned}&qrAssigned=${qrAssigned}&docsAssigned=${docsAssigned}&qrScanData=${qrScanData}`)
-        axios.post("https://we-safe-partner-portal-backend1.onrender.com/customerData/filter",{groupSelect,groupAssigned,qrAssigned,docsAssigned,qrScanData},
-            {
-                "headers":{
-                    "Content-Type":"application/json"
-                }
+        // axios.post("https://we-safe-partner-portal-backend1.onrender.com/customerData/filter",{groupSelect,groupAssigned,qrAssigned,docsAssigned,qrScanData,registerDateStart,registerDateEnd},
+        //     {
+        //         "headers":{
+        //             "Content-Type":"application/json"
+        //         }
+        //     }
+        // )
+        axios.post("http://localhost:1902/customerData/filter",{groupSelect,groupAssigned,qrAssigned,docsAssigned,qrScanData},
+        {
+            "headers":{
+                "Content-Type":"application/json"
             }
-        ).then(res => {
-            
+        }
+        )
+        .then(res => {
             setFilteredData(res.data.filteredData)
+            setFilterDataDisplayed(true)
         }).catch(err => {
             console.log(err.message)
         })
@@ -176,6 +229,13 @@ const HomePage = () => {
         aTag.click()
         aTag.remove()
     }
+
+    useEffect(() => {
+        if(cookies.get("type")==="admin")
+            navigate("/admin")
+        else    
+            navigate("/home")
+    },[])
     
     useEffect(() => {
         if(!cookies.get("token"))
@@ -209,21 +269,30 @@ const HomePage = () => {
                     <h2 className='head-text' >  <span> Partner Portal</span> </h2>
                 </div>
                 <div className='app__header-btns' >
-                    <div style={{paddingBottom:'25px'}}  >
+                    <div style={{paddingBottom:'25px',display:'flex',marginTop:'10px'}}  >
                         {/* <Button style={{marginLeft:'100px',width:'160px',border:'1px solid blue' ,marginTop:'20px'}} onClick={sortChange} >Sort <span><MdSort style={{marginLeft:'5px'}} /> </span></Button> */}
                         <Button style={{marginLeft:'100px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleModal} >Filter <span><MdFilterListAlt style={{marginLeft:'5px'}} /> </span> </Button>
-                        <Button style={{marginLeft:'150px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleAddToGroup} >Assign Group <span><MdOutlineAssignmentInd style={{verticalAlign:'middle',marginLeft:'5px'}}/></span> </Button>
-                        <Button style={{marginLeft:'150px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleMultiDocModal} >Add Documents <span><MdUploadFile style={{marginLeft:'5px'}} /> </span> </Button>
+                        <Button style={{marginLeft:'75px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleAddToGroup} >Assign Group <span><MdOutlineAssignmentInd style={{verticalAlign:'middle',marginLeft:'5px'}}/></span> </Button>
+                        <Button style={{marginLeft:'75px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleMultiDocModal} >Add Documents <span><MdUploadFile style={{marginLeft:'5px'}} /> </span> </Button>
                         {/* <Button  style={{marginLeft:'75px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleCustomerModal} > Add Customer <span><MdAdd style={{marginLeft:'5px'}} /> </span></Button> */}
-                        <input placeholder='search' onChange={(e) => setSearch(e.target.value)} style={{marginTop:'30px',verticalAlign:'bottom',width:'250px',height:'40px',marginLeft:'150px'}} />
-
+                        <form onSubmit={handleSearchSubmit} style={{marginLeft:'75px',verticalAlign:'middle'}} >
+                            <input placeholder='search' onChange={(e) => {
+                                setSearch(e.target.value)
+                            }}  
+                            style={{marginTop:'20px',verticalAlign:'bottom',width:'250px',height:'40px',verticalAlign:'middle'}} />
+                            <Button type='submit'style={{marginLeft:'50px',marginTop:'20px',width:'160px',border:'1px solid blue',verticalAlign:'middle'}} >Search</Button>
+                        </form>
                     </div>
                 </div>
                 <div >
-                    <TableCard searched={search} sort={sort} groupSelected={groupSelect} groupAssigned={groupAssigned} qrAssigned={qrAssigned} 
+                {/* //searched={search} */}
+                    <TableCard searched={searchValue} sort={sort} groupSelected={groupSelect} groupAssigned={groupAssigned} qrAssigned={qrAssigned} 
                         qrScanData={qrScanData} docsAssigned={docsAssigned} addToGroup={addToGroup} toggleAddToGroup={toggleAddToGroup}
                         addMultiDoc={addMultiDoc} toggleMultiDocModal={toggleMultiDocModal} filteredData={filteredData} 
+                        filterDataDisplayed={filterDataDisplayed} setFilterDataDisplayed={setFilterDataDisplayed}
                     />
+                    
+                    
                     {/* <Pagination style={{marginTop:'25px'}} postsPerPage={postsPerPage} paginate={paginate} totalPosts={datas.length} /> */}
                     {
                         modal && (
@@ -265,8 +334,10 @@ const HomePage = () => {
                                     </select>
                                     <label style={{marginLeft:'10px'}} >Registration Date</label>
                                     <div style={{marginBottom:'10px'}} >
-                                        <input type='date' placeholder='from' style={{width:'40%'}} label='from' className='date-time-ip' />
-                                        <input type='date' placeholder='to' style={{width:'40%'}} label='to' className='date-time-ip' />
+                                        <input type='date' placeholder='from' style={{width:'40%'}} label='from' 
+                                        className='date-time-ip' onChange={e=>setRegisterDateStart(e.target.value)} />
+                                        <input type='date' placeholder='to' style={{width:'40%'}} label='to' 
+                                        className='date-time-ip' onChange={e=>setRegisterDateEnd(e.target.value)} />
                                     </div>
                                     
                                     <Button  

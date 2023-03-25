@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import axios from 'axios'
 import { TextField,Button } from '@mui/material'
 import Cookies from 'universal-cookie' 
@@ -12,34 +12,43 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const [invalid, setInvalid] = useState(false)
   const cookies=new Cookies()
+  const adminUid='bsR73uiraU0bmWlI8kDw'
   const navigate=useNavigate()
+
+ 
 
   const handleSubmit=(e) => {
     e.preventDefault()
+    // axios.post("https://we-safe-partner-portal-backend1.onrender.com/partnerUsers/login",{partnerUserEmail:email,password:password},{
+    //   "headers":{
+    //     "Content-Type":"application/json"
+    //   }
+    // })
     axios.post("https://we-safe-partner-portal-backend1.onrender.com/partnerUsers/login",{partnerUserEmail:email,password:password},{
       "headers":{
         "Content-Type":"application/json"
       }
     })
-    // axios.post("http://localhost:1902/partnerUsers/login",{partnerUserEmail:email,password:password},{
-    //   "headers":{
-    //     "Content-Type":"application/json"
-    //   }
-    // })
     .then(res => {
-      console.log(res)
-      cookies.set("loggedInPartnerUser",res.data.partner[0].partnerUid)
-      cookies.set("token",res.data.token,{
-        expires: new Date(Date.now()+18000000)
-      })
-      if(res.data.message==='logged in successfully'){
-        // window.location.reload()
-        // navigate("/home")
-        cookies.get("loggedInPartnerUser")
-        navigate("/")
-        window.location.reload()
-      }
-      
+        // cookies.set("loggedInPartnerUser",res.data.partner[0].partnerUid)
+        // cookies.set("token",res.data.token,{
+        //   expires: new Date(Date.now()+18000000)
+        // })
+        cookies.set("loggedInPartnerUser",res.data.partner[0].partnerUid)
+        cookies.set("token",res.data.token,{
+          expires: new Date(Date.now()+18000000)
+        })
+        cookies.set("type",res.data.partner[0].type)
+        if(res.data.message==='logged in successfully'){
+          // window.location.reload()
+          // navigate("/home")
+          // if(cookies.get("type")==="admin"){
+          //   navigate("/admin")
+          // }
+          cookies.get("loggedInPartnerUser")
+          navigate("/home")
+          window.location.reload()
+        }
     }).catch(err => {
       console.log(err.message)
       setInvalid(!invalid)

@@ -14,7 +14,7 @@ import safe from '../assets/safe.png'
 //replace groups by cusgroups
 
 const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanData,docsAssigned,addToGroup,
-    toggleAddToGroup,toggleMultiDocModal,addMultiDoc,filteredData}) => {
+    toggleAddToGroup,toggleMultiDocModal,addMultiDoc,filteredData,filterDataDisplayed,setFilterDataDisplayed}) => {
     const [datas, setData] = useState([]) 
     const [newData, setNewData] = useState([])
     const [loading, setLoading] = useState(false)
@@ -53,7 +53,7 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
     const [deleteUserId, setDeleteUserId] = useState('')
 
     const [scanHistory,setScanHistory]=useState(null)
-
+    const [searchValueDisplayed, setSearchValueDisplayed] = useState(false)
     const navigate=useNavigate()
     const excludedColumns=['_id']
 
@@ -80,30 +80,9 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
     
     //for searchbar
     useEffect(() => {
-        const getData=async() => {
-            try {
-                await axios.get("https://we-safe-partner-portal-backend1.onrender.com/customerData/new?page=1&limit=10").then(res=> {
-                    setNewData(res.data.results.customers)
-                }).catch(err => {
-                    console.log(err.message)
-                }) 
-            } catch (error) {
-                console.log(error.message)
-            }
-        }
-        const lowerCaseValue=searched.toLowerCase().trim()
-        if(!lowerCaseValue)
-            getData()
-        else{
-            let filteredData=newData.filter((data) => {
-                const customerData= Object.keys(data).some(key => {
-                    return data[key]?.toString().toLowerCase().includes(lowerCaseValue) 
-                })
-                return customerData
-            })
-            
-            setNewData(filteredData)
-            
+        if(searched.length!==0){
+            setNewData(searched) 
+            setSearchValueDisplayed(true)
         }
     },[searched])
 
@@ -197,29 +176,29 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
         
         const dataArr=(JSON.stringify(newData))
 
-        // axios.post("https://we-safe-partner-portal-backend1.onrender.com/uploadToMultiCustomers",{name,filename,description,dataArr},{
-        //     headers:{
-        //         "Content-Type":"multipart/form-data",
-        //     }
-        // })
-        axios.post("http://localhost:1902/uploadToMultiCustomers",{name,filename,description,dataArr},{
+        axios.post("https://we-safe-partner-portal-backend1.onrender.com/uploadToMultiCustomers",{name,filename,description,dataArr},{
             headers:{
                 "Content-Type":"multipart/form-data",
             }
         })
+        // axios.post("http://localhost:1902/uploadToMultiCustomers",{name,filename,description,dataArr},{
+        //     headers:{
+        //         "Content-Type":"multipart/form-data",
+        //     }
+        // })
             .then(res => {
                 console.log(res)
                 setMultiSelect(false)
                 toggleMultiDocModal()
                 if(res.data.message)
-                    // window.location.reload()
-                    console.log(res.data.message)
+                    window.location.reload()
+                console.log(res.data.message)
                     
             }).catch((err) => {
                 console.log(err.message)
+                toggleMultiDocModal()
             })
             setMultiSelect(false)
-            toggleMultiDocModal()
             //window.location.reload()
             navigate("/")
         
@@ -524,12 +503,28 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
     
    return (
     <div>
-        <label style={{marginTop:'2%',verticalAlign:'middle',
+        <div style={{display:'flex',flexDirection:'column'}} >
+            <label style={{marginTop:'2%',verticalAlign:'middle',
             paddingLeft:'75px'}}><input type='checkbox' name='allSelect'  id='0'
             style={{position:'relative',verticalAlign:'bottom'}} placeholder='Select All' 
             checked={newData.filter(item => (item?.isChecked!==true)).length<1}
             onChange={selectHandleChange}
             />Select All</label>
+            {
+                filterDataDisplayed?(
+                    <a href="/" style={{marginLeft:'100px',marginTop:'20px'}} onClick={() => setFilterDataDisplayed(false)} > clear filter</a>
+                ):(
+                    <></>
+                )
+            }
+            {
+                searchValueDisplayed?(
+                    <a href="/" style={{marginLeft:'100px',marginTop:'20px'}} onClick={() => setSearchValueDisplayed(false)} > clear search results</a>
+                ):(
+                    <></>
+                )
+            }
+        </div>
         <div className='app__table' >
             <div className="head row">
                 <div className="column">
@@ -590,10 +585,28 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                             <div style={{display:'flex',alignItems:'left',marginTop:'5px'}} ><p> Blood Grp: <span>N/A</span></p></div>
                                         )
                                     }
+                                    {
+                                        data.dateRegistered?(
+                                        <div style={{display:'flex',alignItems:'left',marginTop:'25px'}} >
+                                            <p> Registered On- <span> {data.dateRegistered}</span></p>
+                                        </div>
+                                        ):(
+                                            <div style={{display:'flex',alignItems:'left',marginTop:'25px'}} ><p> Registered On- <span>N/A</span></p></div>
+                                        )
+                                    }
+                                    {
+                                        data.portalId?(
+                                        <div style={{display:'flex',alignItems:'left'}}  >
+                                            <p style={{fontSize:'0.8rem',marginTop:'10px',color:'blue'}} >Cust ID: {data.portalId}</p>
+                                        </div>
+                                        ):(
+                                            <p style={{fontSize:'0.8rem',marginTop:'10px',color:'blue'}} >Cust ID: {data.userUid}</p>
+                                        )
+                                    }
                                     
-                                    <div style={{display:'flex',alignItems:'left'}}  >
+                                    {/* <div style={{display:'flex',alignItems:'left'}}  >
                                         <p style={{fontSize:'0.8rem',marginTop:'20px',color:'blue'}} >Cust ID: {data.userUid}</p>
-                                    </div>
+                                    </div> */}
                                     </div>
                                     
                                 </div>
@@ -601,17 +614,19 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                             <div className="column">
                                 <div className="card_content"   >
                                     <b>Groups:</b>
+                                    
                                     {
-                                        <div style={{marginTop:'10%'}} >{data?.customerGroups[0]?.groupName}</div>
+                                        <div style={{marginTop:'10%',color:'green'}} >{data?.customerGroups[0]?.groupName}</div>
                                     }
                                     <div style={{display:'flex',justifyContent:'left',
                                     alignItems:'left',flexDirection:'column',marginTop:'5%'}}>
                                         <div><b>Past Groups:</b></div>
                                     {
+                                        
                                         (data?.customerGroups?.length>0)?(
                                             data?.customerGroups?.slice(1)?.map((group) => (
                                                 <div key={group._id} style={{marginTop:'2px'}}>
-                                                    <div>{group.groupName}</div>
+                                                    <div  >{group.groupName}</div>
                                                 </div>
                                             ))
                                         ):(
@@ -706,7 +721,7 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                                         toggleLastScannedQrModal()
                                                         setScanHistory(data?.lastScanned)
                                                     }
-                                                }  >[See All Scans]</a> </span>
+                                                }  >[Detail List]</a> </span>
                                             </div>
                                             <div>
                                                 <h4>Latest Scan</h4>

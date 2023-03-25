@@ -26,8 +26,9 @@ const Navbar = () => {
         e.preventDefault()
         cookies.remove("token",{path:"/"})
         cookies.remove("loggedInPartnerUser",{path:"/"})
-        window.location.reload()
+        cookies.remove("type",{path:"/"})
         navigate("/login")
+        window.location.reload()
     }
 
     return (

@@ -9,6 +9,7 @@ import AddDocument from './Components/AddDocument';
 import AddQr from './Components/AddQr';
 import AddGroup from './Components/AddGroup';
 import AddCustomer from './Components/AddCustomer'
+import AdminPage from './Components/Admin';
 
 
 function App() {
@@ -16,14 +17,15 @@ function App() {
     <div className="app">
       <Navbar />
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/home" element={<HomePage />} />
+          <Route exact path="/" element={<HomePage />} />
+          <Route exact path="/home" element={<HomePage />} />
           <Route path="/addcustomer" element={<AddCustomer />} />
           <Route path="/signup" element={<Signup />}/>
           <Route path="/login" element={<Login /> } />
           <Route path="/:id/addoc" element={<AddDocument/> } />
           <Route path="/:id/addqr"  element={<AddQr />} />
           <Route path="/addgroup"  element={<AddGroup />} />
+          <Route exact path="/admin" element={<AdminPage />} />
         </Routes>
 
     </div>
