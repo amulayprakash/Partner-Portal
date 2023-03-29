@@ -10,6 +10,7 @@ import AddQr from './Components/AddQr';
 import AddGroup from './Components/AddGroup';
 import AddCustomer from './Components/AddCustomer'
 import AdminPage from './Components/Admin';
+import ScanDetails from './Components/ScanDetails';
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route path="/:id/addqr"  element={<AddQr />} />
           <Route path="/addgroup"  element={<AddGroup />} />
           <Route exact path="/admin" element={<AdminPage />} />
+          <Route exact path="/scans" element={<ScanDetails />} />
         </Routes>
 
     </div>

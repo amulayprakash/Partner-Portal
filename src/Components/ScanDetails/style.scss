@@ -7,7 +7,7 @@
   }
   
   /* Float four columns side by side */
-  .column_admin {
+  .column_scan {
     float: left;
     width: 15%;
     padding: 0 ;
@@ -28,7 +28,7 @@
   }
   
   /* Style the counter cards */
-  .card_admin {
+  .card_scan {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
     padding: 16px;
     text-align: center;
@@ -41,12 +41,12 @@
     height: 50px;
     }
 
-  .card_content_admin {
+  .card_content_scan {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* this adds the "card" effect */
     font-family:Verdana, Geneva, Tahoma, sans-serif;
     padding: 10px;
     background-color: white;
-    height: 70px;
+    height: 60px;
     opacity: 80%;
     border: 1px solid rgb(128, 128, 128);
     font-size:.85rem;
@@ -66,9 +66,9 @@
     box-shadow: 0 0 25px rgb(36, 31, 31);
   }
 
-  .app__table_admin{
-    margin-left:19%;
-    width:900px;
+  .app__table_scan{
+    margin-left:8.5%;
+    width:1200px;
     border-collapse: collapse;
   
   }

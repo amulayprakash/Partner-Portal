@@ -1,7 +1,7 @@
 import { Button, TextField } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect,useState } from 'react'
-import { MdDeleteForever, MdFilterListAlt, MdOutlineAssignmentInd, MdUploadFile, MdClose,MdQrCodeScanner  } from 'react-icons/md';
+import { MdDeleteForever, MdFilterListAlt, MdOutlineAssignmentInd, MdUploadFile, MdClose, MdQrCodeScanner  } from 'react-icons/md';
 import ReactPaginate from 'react-paginate';
 import { useNavigate } from 'react-router-dom'
 import Cookies from 'universal-cookie/cjs/Cookies';
@@ -210,30 +210,32 @@ const AdminPage = () => {
             </div>
             <div className='app__header-btns' >
                 <div style={{paddingBottom:'25px',display:'flex',marginTop:'10px'}}  >
-                    <Button style={{marginLeft:'350px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleModal} >Filter <span><MdFilterListAlt style={{marginLeft:'5px'}} /> </span> </Button>
+                    <Button style={{marginLeft:'250px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleModal} >Filter <span><MdFilterListAlt style={{marginLeft:'5px'}} /> </span> </Button>
                     <form onSubmit={(e) => {
                         setLoading(true)
                         handleSearchSubmit(e)
                     }} 
-                    style={{marginLeft:'75px',verticalAlign:'middle'}} >
+                    style={{marginLeft:'50px',verticalAlign:'middle'}} >
                         <input placeholder='search' onChange={(e) => {
                             setSearch(e.target.value)
                         }}  
                         style={{marginTop:'20px',verticalAlign:'bottom',width:'250px',height:'40px',verticalAlign:'middle'}} />
                         <Button type='submit'style={{marginLeft:'50px',marginTop:'20px',width:'160px',border:'1px solid blue',verticalAlign:'middle'}} >Search</Button>
                     </form>
+                    <Button href='/scans' style={{marginLeft:'50px',marginTop:'20px',width:'160px',backgroundColor:'#0502b193',color:'white'}}>Scans <span><MdQrCodeScanner style={{marginLeft:'5px',verticalAlign:'middle',fontSize:'1.2rem'}} /> </span> </Button>
+
                 </div>
                 <div>
                     {
                     filterDataDisplayed?(
-                        <a href="/admin" style={{marginLeft:'300px',marginTop:'20px'}} onClick={() => setFilterDataDisplayed(false)} > clear filter</a>
+                        <a href="/admin" style={{marginLeft:'340px',marginTop:'20px'}} onClick={() => setFilterDataDisplayed(false)} > clear filter</a>
                     ):(
                         <></>
                     )
                     }
                     {
                         searchValueDisplayed?(
-                            <a href="/admin" style={{marginLeft:'300px',marginTop:'20px'}} onClick={() => setSearchValueDisplayed(false)} > clear search results</a>
+                            <a href="/admin" style={{marginLeft:'340px',marginTop:'20px'}} onClick={() => setSearchValueDisplayed(false)} > clear search results</a>
                         ):(
                             <></>
                         )
@@ -246,19 +248,19 @@ const AdminPage = () => {
                 <div className="column_admin" style={{width:'160px'}}>
                     <div className="card_admin"  ><h3>Customer Info</h3></div>
                 </div>
-                <div className="column_admin" style={{width:'130px'}}>
+                <div className="column_admin" style={{width:'180px'}}>
                     <div className="card_admin"  ><h3>Registration Date</h3></div>
                 </div>
-                <div className="column_admin" style={{width:'120px'}}>
+                <div className="column_admin" style={{width:'135px'}}>
                     <div className="card_admin" ><h3>Blood Group</h3></div>
                 </div>
-                <div className="column_admin" style={{width:'130px'}}>
+                <div className="column_admin" style={{width:'110px'}}>
                     <div className="card_admin"  ><h3>DOB</h3></div>
                 </div>
-                <div className="column_admin" style={{width:'160px'}}>
-                    <div className="card_admin" style={{display:'flex'}} ><img src={safe} style={{height:'1.3rem'}} alt='weSafe' /><h3 style={{marginLeft:'5px'}} >WeSafe  Qr Details</h3></div>
+                <div className="column_admin" style={{width:'210px'}}>
+                    <div className="card_admin" style={{display:'flex'}} ><img src={safe} style={{height:'1.3rem'}} alt='weSafe' /><h3 style={{marginLeft:'1px'}} >WeSafe  Qr Details</h3></div>
                 </div>
-                <div className="column_admin" style={{width:'130px'}} >
+                <div className="column_admin" style={{width:'100px'}} >
                     <div className="card_admin"><h3>Actions</h3></div>
                 </div>
             </div>
@@ -272,17 +274,17 @@ const AdminPage = () => {
                                         <div className='content1'  >
                                         
                                         <div style={{display:'flex',alignItems:'left'}} >
-                                        <p style={{marginLeft:'5px',displau:'flex'}} ><b>{data.name}- {(data.gender===1||data.gender==='male')?(<>M</>):(<>F</>)}</b> <span></span></p>
+                                        <p style={{marginLeft:'5px',displau:'flex'}} ><b>{data.name}</b></p>
                                         </div>
                                         <div style={{display:'flex',alignItems:'left',marginLeft:'5px'}} >
-                                            <p  style={{alignItems:'left',marginTop:'5px'}}>  <span>{data.address}</span></p>
+                                            <p  style={{alignItems:'left'}}>  <span>{data.address}</span></p>
                                         </div>
                                        
                                         </div>
                                         </div>
                                     </div>
 
-                                    <div key={data._id} className="column_admin" style={{width:'130px'}}>
+                                    <div key={data._id} className="column_admin" style={{width:'180px'}}>
                                         <div className="card_content_admin"  >
                                         <div className='content1'  >
                                         {
@@ -298,7 +300,7 @@ const AdminPage = () => {
                                         </div>
                                     </div>
 
-                                    <div key={data._id} className="column_admin" style={{width:'120px'}} >
+                                    <div key={data._id} className="column_admin" style={{width:'135px'}} >
                                         <div className="card_content_admin"  >
                                         <div className='content1'  >
                                         {
@@ -314,7 +316,7 @@ const AdminPage = () => {
                                         </div>
                                     </div>
 
-                                    <div key={data._id} className="column_admin" style={{width:'130px'}} >
+                                    <div key={data._id} className="column_admin" style={{width:'110px'}} >
                                     <div className="card_content_admin"  >
                                     <div className='content1'  >
                                         {
@@ -331,7 +333,7 @@ const AdminPage = () => {
                                     </div>
                                     
 
-                                <div className="column_admin" style={{width:'160px'}} >
+                                <div className="column_admin" style={{width:'210px'}} >
                                 <div className="card_content_admin">
                                     <div >
                                     {(data?.customerQrs?.length>0)?(
@@ -349,14 +351,14 @@ const AdminPage = () => {
                                         </div>
                                             ))
                                         ):(
-                                            <div style={{color:'red'}} >No QR Code Assigned Yet</div> 
+                                            <div style={{color:'red',marginLeft:'23px'}} ><p>No QR Code Assigned Yet</p></div> 
                                         )
                                     }
                                     </div>    
                                     </div>
                                     </div>
                                     
-                                    <div key={data._id} className="column_admin" style={{width:'130px'}} >
+                                    <div key={data._id} className="column_admin" style={{width:'100px'}} >
                                     <div className="card_content_admin" >
                                     <div className='content1' style={{display:'flex',justifyContent:'center'}}  >
                                         <MdDeleteForever 
@@ -384,7 +386,7 @@ const AdminPage = () => {
                             )
                         })):(
                             <>
-                            <div style={{marginTop:'20px'}} class="loader"></div>
+                            <div style={{marginTop:'20px',marginRight:'430px'}} class="loader"></div>
                             </>
                         )
                     }
