@@ -70,7 +70,9 @@ const HomePage = () => {
     useEffect(() => {
         const getData=async() => {
             try {
-                await axios.get("https://we-safe-partner-portal-backend1.onrender.com/customerData").then(res=> {
+                await axios.get("https://we-safe-partner-portal-backend1.onrender.com/customerData")
+                // await axios.get("http://localhost:1902/customerData")
+                .then(res=> {
                     setData(res.data.customers)
                 }).catch(err => {
                     console.log(err.message)
@@ -120,6 +122,7 @@ const HomePage = () => {
     const getData=async(lowerCaseValue) => {
         try {
             await axios.get(`https://we-safe-partner-portal-backend1.onrender.com/search?searchKey=${lowerCaseValue}`)
+            // await axios.get(`http://localhost:1902/search?searchKey=${lowerCaseValue}`)
             .then(res=> {
                 setSearchValue(res.data.customers)
             }).catch(err => {
@@ -164,20 +167,28 @@ const HomePage = () => {
         //         }
         //     }
         // )
-        axios.post("http://localhost:1902/customerData/filter",{groupSelect,groupAssigned,qrAssigned,docsAssigned,qrScanData},
+        axios.post("https://we-safe-partner-portal-backend1.onrender.com/customerData/filter",{groupSelect,groupAssigned,qrAssigned,docsAssigned,qrScanData,registerDateStart,registerDateEnd},
         {
             "headers":{
                 "Content-Type":"application/json"
             }
         }
         )
+        // axios.post("http://localhost:1902/customerData/filter",{groupSelect,groupAssigned,qrAssigned,docsAssigned,qrScanData,registerDateStart,registerDateEnd},
+        // {
+        //     "headers":{
+        //         "Content-Type":"application/json"
+        //     }
+        // }
+        // )
         .then(res => {
             setFilteredData(res.data.filteredData)
+            console.log(res.data.filteredData)
             setFilterDataDisplayed(true)
         }).catch(err => {
             console.log(err.message)
         })
-        console.log(groupSelect,groupAssigned,qrAssigned,docsAssigned,qrScanData)
+        console.log(groupSelect,groupAssigned,qrAssigned,docsAssigned,qrScanData,registerDateStart,registerDateEnd)
     }
 
     const sortChange=() =>{
@@ -335,7 +346,7 @@ const HomePage = () => {
                                     <label style={{marginLeft:'10px'}} >Registration Date</label>
                                     <div style={{marginBottom:'10px'}} >
                                         <input type='date' placeholder='from' style={{width:'40%'}} label='from' 
-                                        className='date-time-ip' onChange={e=>setRegisterDateStart(e.target.value)} />
+                                        className='date-time-ip'  onChange={e=>setRegisterDateStart(e.target.value)}/>
                                         <input type='date' placeholder='to' style={{width:'40%'}} label='to' 
                                         className='date-time-ip' onChange={e=>setRegisterDateEnd(e.target.value)} />
                                     </div>

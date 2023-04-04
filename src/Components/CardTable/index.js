@@ -37,7 +37,8 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
     const [docTags,setdocTags]=useState([])
     const [name, setName] = useState('')
     const [description,setDescription]=useState('')
-    const [filename,setFilename]=useState(' ')
+    const [file,setFilename]=useState(' ')
+    const [ucid, setUcid] = useState('')
 
     const [qrId, setQrId] = useState('')
     const [qrPin, setQrPin] = useState('')
@@ -49,6 +50,7 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
     const [deleteUser, setDeleteUser] = useState(false)
 
     const [docId,setDocId]=useState('')
+    const [deleteKey, setDeleteKey] = useState('')
     const [qrdeleteId,setqrdeleteId]=useState('')
     const [deleteUserId, setDeleteUserId] = useState('')
 
@@ -67,7 +69,14 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                     setNewData(res.data.results.customers)
                     setLoading(false)
                     
-                }).catch(err=>{
+                })
+                // await axios.get(`http://localhost:1902/customerData/new?page=${curPage}&limit=10`).then(res=>{
+                //     setPageCount(Math.ceil(res.data.results.total/10))
+                //     setNewData(res.data.results.customers)
+                //     setLoading(false)
+                    
+                // })
+                .catch(err=>{
                     console.log(err.message)
                 })
             } catch (error) {   
@@ -127,7 +136,9 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
 
     //to delete a doc
     const handleDocDeleteClick=async(id) => {
-        axios.delete(`https://we-safe-partner-portal-backend1.onrender.com/doc/${id}`).then(res=> {
+        // axios.delete(`https://we-safe-partner-portal-backend1.onrender.com/doc/${id}`)
+        axios.post("https://we-safe-partner-portal-backend1.onrender.com/api/wesafe/docs/delete",{objId:id,docType:'other',key:deleteKey})
+        .then(res=> {
             console.log(res)
             setDocId('')
             toggleDeleteDoc()
@@ -147,20 +158,26 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
     //to upload a doc
     const handleDocSubmit=async(e) => {
         e.preventDefault()
-        axios.post("https://we-safe-partner-portal-backend1.onrender.com/upload",{name,filename,description,customerId:custId},{
-            headers:{
-                "Content-Type":"multipart/form-data",
-            }
-        })
+        // axios.post("https://we-safe-partner-portal-backend1.onrender.com/upload",{name,filename,description,customerId:custId},{
+        //     headers:{
+        //         "Content-Type":"multipart/form-data",
+        //     }
+        // })
         // axios.post("http://localhost:1902/upload",{name,filename,description,customerId:custId},{
         //     headers:{
         //         "Content-Type":"multipart/form-data",
         //     }
         // })
+        axios.post("https://we-safe-partner-portal-backend1.onrender.com/api/wesafe/docs/upload",{name,file,docType:description,customerId:custId,userId:ucid},{
+            headers:{
+                "Content-Type":"multipart/form-data",
+            }
+        })
             .then(res => {
                 console.log(res)
                 toggleDocModal()
                 setCustId('')
+                setUcid('')
                 console.log(docTags)
                 window.location.reload()
             }).catch((err) => {
@@ -176,7 +193,7 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
         
         const dataArr=(JSON.stringify(newData))
 
-        axios.post("https://we-safe-partner-portal-backend1.onrender.com/uploadToMultiCustomers",{name,filename,description,dataArr},{
+        axios.post("https://we-safe-partner-portal-backend1.onrender.com/uploadToMultiCustomers",{name,file,description,dataArr},{
             headers:{
                 "Content-Type":"multipart/form-data",
             }
@@ -426,7 +443,13 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                 setNewData(res.data.results.customers)
                 setLoading(false)
                 
-            }).catch(err=>{
+            })
+            // await axios.get(`http://localhost:1902/customerData/new?page=${curPage}&limit=10`).then(res=>{
+            //     setNewData(res.data.results.customers)
+            //     setLoading(false)
+                
+            // })
+            .catch(err=>{
                 console.log(err.message)
             })
         } catch (error) {   
@@ -646,31 +669,33 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                         (data?.customerDocs?.length>0)?(
                                             data?.customerDocs?.map((doc) => {
                                                 const openPdf=async() => {
-                                                    console.log(atob(doc.document.data))
-                                                    axios.get(`https://we-safe-partner-portal-backend1.onrender.com/getfile/${atob(doc.document.data)}`,{
-                                                        method: "GET",
-                                                        responseType: "blob",
-                                                      })
+                                                    // console.log(atob(doc.document.data))
+                                                    // axios.get(`https://we-safe-partner-portal-backend1.onrender.com/getfile/${atob(doc.document.data)}`,{
+                                                    //     method: "GET",
+                                                    //     responseType: "blob",
+                                                    //   })
                                                     // axios.get(`http://localhost:1902/getfile/${atob(doc.document.data)}`,{
                                                     //     method: "GET",
                                                     //     responseType: "blob",
                                                     //   })
-                                                      .then(res => {
-                                                        console.log(res.data)
-                                                        var file=new Blob([res.data],{type:"application/pdf"})
-                                                        const fileURL=URL.createObjectURL(file)
-                                                        window.open(fileURL)
-                                                    }).catch(err => {
-                                                        console.log(err.message)
-                                                    })
+                                                    //   .then(res => {
+                                                    //     console.log(res.data)
+                                                    //     var file=new Blob([res.data],{type:"application/pdf"})
+                                                    //     const fileURL=URL.createObjectURL(file)
+                                                    //     window.open(fileURL)
+                                                    // }).catch(err => {
+                                                    //     console.log(err.message)
+                                                    // })
+                                                    window.open(doc.documentS3Link)
                                                 }
                                                 return(
                                                 <div key={doc._id} style={{marginTop:'2px'}} >
-                                                   <div style={{textDecoration:'underline'}}  ><a onClick={openPdf}  > {doc.name}</a><span> 
+                                                   <div style={{textDecoration:'underline'}}  ><a onClick={openPdf} > {doc.name}</a><span> 
                                                     <MdDeleteForever onClick={e=>
                                                         {   e.preventDefault()
                                                             // handleDocDeleteClick(doc._id)
                                                             setDocId(doc._id)
+                                                            setDeleteKey(doc.key)
                                                             toggleDeleteDoc()
                                                         }}
                                                     style={{verticalAlign:'middle',color:'red',marginLeft:'20px'}} /> 
@@ -742,6 +767,7 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                     backgroundColor:'#313bac',width:'140px',height:'25px',margin:'8px',
                                     textDecoration:'none',marginTop:'25px'}} onClick={() => {
                                         setCustId(data._id)
+                                        setUcid(`${data.userUid}_${data.childListUid}`)
                                         toggleDocModal()
                                         
                                     }} 
@@ -797,15 +823,12 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                 <h3 className='head-text' style={{fontSize:'1.5rem'}} >Upload The <span>Required</span> Document</h3>
                                     <TextField style={{marginTop:'25px',width:'500px'}}  className='form__text' id="outlined-basic" 
                                     variant="outlined" type='file' onChange={(e) =>setFilename(e.target.files[0])} />
-                                    <div>
-                                    <TextField style={{marginTop:'20px',width:'240px',}}  className='form__text' id="outlined-basic" 
-                                    variant="outlined" label='Name of Document' type='text' onChange={(e) =>setName(e.target.value)} />
-                                    <TextField style={{marginTop:'20px',width:'240px',marginLeft:'20px'}}  className='form__text' id="outlined-basic" 
-                                    variant="outlined" label='Tags' type='text' onChange={e=>handleDocTags(e.target.value)} />
-                                    </div>
                                     
                                     <TextField style={{marginTop:'20px',width:'500px',}}  className='form__text' id="outlined-basic" 
-                                    variant="outlined" type='text' label='Description' onChange={(e) =>setDescription(e.target.value)} />
+                                    variant="outlined" label='Name of Document' type='text' onChange={(e) =>setName(e.target.value)} />
+                                    
+                                    <TextField style={{marginTop:'20px',width:'500px',}}  className='form__text' id="outlined-basic" 
+                                    variant="outlined" type='text' label='docType' onChange={(e) =>setDescription(e.target.value)} />
                                     
                                     
                                     <Button className='btn p-text' variant="outlined" 

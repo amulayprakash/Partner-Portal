@@ -2,9 +2,13 @@ import { Button } from '@mui/material'
 import axios from 'axios'
 import React,{useState} from 'react'
 import { useEffect } from 'react'
-import { MdFilterListAlt, MdLocationOn, MdClose, MdManageAccounts } from 'react-icons/md'
-import safe from '../assets/safe.png' 
+import { MdFilterListAlt, MdLocationOn, MdClose, MdManageAccounts, MdSimCardDownload } from 'react-icons/md'
+import { withScriptjs, withGoogleMap, GoogleMap, Circle, Marker } from "react-google-maps"
+import safe from '../assets/safe.png'
+import Gmap from '../Gmap' 
 import './style.scss'
+import { useNavigate } from 'react-router-dom'
+import {CSVLink} from 'react-csv'
 
 
 const ScanDetails = () => {
@@ -16,6 +20,13 @@ const ScanDetails = () => {
   const [registerDateEnd, setRegisterDateEnd] = useState('')
   const [filterDataDisplayed, setFilterDataDisplayed] = useState(false)
   const [searchValueDisplayed, setSearchValueDisplayed] = useState(false)
+  var [markers, setMarkers] = useState([])
+  const [customerMap, setCustomerMap] = useState('')
+  const [mapOpen, setMapOpen] = useState(false)
+  const [loadMap, setLoadMap] = useState(false);
+  const [downloadData, setdownloadData] = useState([])
+  const navigate=useNavigate()
+
   useEffect(() => {
     const getData=async() =>{
       setLoading(true)
@@ -27,6 +38,10 @@ const ScanDetails = () => {
     }
     getData()
   },[])
+
+  useEffect(() => {
+    setdownloadData(newData)
+  },[newData])
 
   const toggleModal=() => {
     setModal(!modal)
@@ -73,13 +88,45 @@ const ScanDetails = () => {
     }         
   }
 
+  // const toggleMap=() => {
+  //   setMapOpen(!mapOpen)
+  // }
+
   const handleSearchSubmit=(e) =>{
     e.preventDefault()
     const lowerCaseValue=search.toLowerCase().trim()
     getData(lowerCaseValue)
   }
 
-  console.log(newData)
+  // const handleMap=async(e) => {
+  //   e.preventDefault()
+  //   setLoadMap(true)
+  //   axios.get("https://we-safe-partner-portal-backend1.onrender.com/admin/scan")
+  //   .then(res => {
+  //     setMarkers(res.data.scanData)
+      
+  //   })
+  //   .catch(err => {console.log(err.message)})
+  // }
+
+  // markers=markers?.filter((data) => {
+  //   if(data.customerId===customerMap)
+  //     return data
+  // })
+  // console.log(markers)
+  // console.log(customerMap)
+  const csvLinkEl=React.createRef()
+
+  const headers=[
+    {label:'Name',key:`customer[0].name`},
+    {label:'CustomerID',key:'customerId'},
+    {label:'QRCode',key:'qrcode'},
+    {label:'IPAddress',key:'ip_address'},
+    {label:'Latitude',key:'latitude'},
+    {label:'Longitude',key:'longitude'},
+    {label:'Address',key:'address'},
+    {label:'Date-Time',key:'datetime'},
+  ]
 
   return (
     <div>
@@ -91,20 +138,32 @@ const ScanDetails = () => {
         </div>
         <div className='app__header-btns' >
             <div style={{paddingBottom:'25px',display:'flex',marginTop:'10px'}}  >
-                <Button style={{marginLeft:'230px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleModal} >Filter <span><MdFilterListAlt style={{marginLeft:'5px'}} /> </span> </Button>
+                <Button style={{marginLeft:'160px',marginTop:'20px',width:'160px',border:'1px solid blue'}} onClick={toggleModal} >Filter <span><MdFilterListAlt style={{marginLeft:'5px'}} /> </span> </Button>
                 <form  
                   onSubmit={(e) => {
                     setLoading(true)
                     handleSearchSubmit(e)
                   }} 
-                  style={{marginLeft:'75px',verticalAlign:'middle'}} >
+                  style={{marginLeft:'45px',verticalAlign:'middle'}} >
                     <input placeholder='search' onChange={(e) => {
                         setSearch(e.target.value)
                     }}  
                     style={{marginTop:'20px',verticalAlign:'bottom',width:'250px',height:'40px',verticalAlign:'middle'}} />
-                    <Button type='submit' style={{marginLeft:'50px',marginTop:'20px',width:'160px',border:'1px solid blue',verticalAlign:'middle'}} >Search</Button>
+                    <Button type='submit' style={{marginLeft:'45px',marginTop:'20px',width:'160px',border:'1px solid blue',verticalAlign:'middle'}} >Search</Button>
                 </form>
-                <Button href='/admin' style={{marginLeft:'80px',marginTop:'20px',width:'160px',backgroundColor:'#0502b193',color:'white'}}>Customers <span><MdManageAccounts style={{marginLeft:'5px',verticalAlign:'middle',fontSize:'1.2rem'}} /> </span> </Button>
+                <Button href='/admin' style={{marginLeft:'50px',marginTop:'20px',width:'160px',backgroundColor:'#0502b193',color:'white'}}>Customers <span><MdManageAccounts style={{marginLeft:'5px',verticalAlign:'middle',fontSize:'1.2rem'}} /> </span> </Button>
+                <Button  style={{marginLeft:'50px',marginTop:'20px',width:'160px',backgroundColor:'#0502b193',color:'white'}} ><CSVLink
+                  headers={headers}
+                  data={downloadData}
+                  filename="WeSafeScanData"
+                  ref={csvLinkEl}
+                  style={{textDecoration:'none',color:'white'}}
+                > 
+                Download CSV
+                </CSVLink>
+                 <span><MdSimCardDownload style={{marginLeft:'5px',verticalAlign:'middle',fontSize:'1.2rem'}} /> </span> 
+                </Button>
+            
             </div>
         </div>
           {
@@ -258,7 +317,12 @@ const ScanDetails = () => {
                         <div className="card_content_scan" >
                             <div className='content1' style={{display:'flex',justifyContent:'center'}}  >
                                 
-                              <MdLocationOn style={{color:'red',fontSize:'1.3rem'}} onClick={() => openMap(data?.latitude,data?.longitude)} />    
+                              <MdLocationOn style={{color:'red',fontSize:'1.3rem'}} onClick={(e) => {
+                                e.preventDefault()
+                                openMap(data?.latitude,data?.longitude)
+                              }}
+                              
+                              />    
                             </div>
                         </div>
                       </div>
@@ -271,7 +335,7 @@ const ScanDetails = () => {
               </>
             )
           }
-           {
+          {
                         modal && (
                             <div className='modal' >
                                 
@@ -298,7 +362,19 @@ const ScanDetails = () => {
                                 </div>
                             </div>
                         )
-                    }
+            }
+            {/* {loadMap ?
+              (<div className='modal'>
+                 <div className='overlay' onClick={setLoadMap(false)} ></div>
+                  <Gmap loadMap={loadMap} setLoadMap={setLoadMap} mapOpen={mapOpen} />
+              </div>):(<></>)
+            } */}
+            {/* {
+              mapOpen?(
+                <Gmap loadMap={loadMap} setLoadMap={setLoadMap} markers={markers} />
+              ):(<></>)
+            } */}
+            {/* <Gmap loadMap={loadMap} setLoadMap={setLoadMap} /> */}
         </div>
     </div>
      {/* <div>

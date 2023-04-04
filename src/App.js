@@ -11,6 +11,7 @@ import AddGroup from './Components/AddGroup';
 import AddCustomer from './Components/AddCustomer'
 import AdminPage from './Components/Admin';
 import ScanDetails from './Components/ScanDetails';
+import Gmap from './Components/Gmap';
 
 
 function App() {
