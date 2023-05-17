@@ -350,9 +350,11 @@ const ScanDetails = () => {
                                 <MdClose onClick={toggleModal}  style={{color:'#313bac',height:'1.2rem',width:'1.3rem',marginLeft:'300px'}}  />
                                     <h2 style={{marginLeft:'30%'}} > Apply Filter </h2>
                                     <label style={{marginLeft:'20px',marginTop:'20px'}} >Scan Date</label>
-                                    <div style={{marginBottom:'10px'}} >
+                                    <div style={{marginBottom:'10px',display:'flex'}}  >
+                            
                                         <input type='date' placeholder='from' style={{width:'40%'}} label='from' 
                                         className='date-time-ip' onChange={e=>setRegisterDateStart(e.target.value)} />
+                            
                                         <input type='date' placeholder='to' style={{width:'40%'}} label='to' 
                                         className='date-time-ip' onChange={e=>setRegisterDateEnd(e.target.value)} />
                                     </div>

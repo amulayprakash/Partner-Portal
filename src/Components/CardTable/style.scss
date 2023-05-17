@@ -50,6 +50,13 @@ body {
   border: 1px solid rgb(128, 128, 128);
   font-size:.85rem;
   text-align: left;
+  // @media screen and(max-width:480px) {
+  //   width: 100%;
+  //   justify-content: center;
+  // }
+  // @media screen and(max-width:768px) {
+  //   width: 100%;
+  // }
 }
 
 /* .content1{
@@ -69,12 +76,19 @@ body {
   
   width:1200px;
   border-collapse: collapse;
-
+  overflow-x: auto;
+  // @media screen and(max-width:480px) {
+  //   width: 100%;
+  //   margin: 1rem;
+  // }
+  // @media screen and(max-width:768px) {
+  //   width: 100%;
+  // }
 }
 
 
 /* Responsive columns - one column layout (vertical) on small screens */
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 450px) {
   .column {
     width: 100%;
     display: block;
@@ -102,11 +116,11 @@ body.active-modal {
   right: 0;
   bottom: 0;
   position: fixed;
-
 }
 
 .overlay {
   background: rgba(49,49,49,0.8);
+  
 }
 .modal-content {
   display: flex;
@@ -187,6 +201,43 @@ body.active-modal {
   max-width: 600px;
   min-width: 300px;
 }
+.modal-content_edit {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  top: 2%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 0.5;
+  background: #f1f1f1;
+  padding: 3px 20px;
+  margin-top: 370px;
+  border-radius: 3px;
+  max-width: 600px;
+  min-width: 300px;
+
+  @media screen and(max-width:480px) {
+    width: 100%;
+   
+  }
+  @media screen and(max-width:768px) {
+    width: 100%;
+  }
+}
+
+.modal_edit, .overlay_edit {
+  
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: fixed;
+
+}
+
 
 .close-modal {
   position: absolute;

@@ -96,9 +96,11 @@ const AdminPage = () => {
     }
     const getData=async(lowerCaseValue) => {
         try {
-            await axios.get(`https://we-safe-partner-portal-backend1.onrender.com/admin/search?searchKey=${lowerCaseValue}`)
+             await axios.get(`https://we-safe-partner-portal-backend1.onrender.com/admin/search?adminSearchKey=${lowerCaseValue}`)
+            //await axios.get(`http://localhost:1902/admin/search?adminSearchKey=${lowerCaseValue}`)
             .then(res=> {
                 setSearchValue(res.data.customers)
+                console.log(res)
                 setNewData(res.data.customers)
                 setSearchValueDisplayed(true)
                 setLoading(false)
@@ -228,14 +230,14 @@ const AdminPage = () => {
                 <div>
                     {
                     filterDataDisplayed?(
-                        <a href="/admin" style={{marginLeft:'340px',marginTop:'20px'}} onClick={() => setFilterDataDisplayed(false)} > clear filter</a>
+                        <a href="/admin" style={{marginLeft:'270px',marginTop:'20px'}} onClick={() => setFilterDataDisplayed(false)} > clear filter</a>
                     ):(
                         <></>
                     )
                     }
                     {
                         searchValueDisplayed?(
-                            <a href="/admin" style={{marginLeft:'340px',marginTop:'20px'}} onClick={() => setSearchValueDisplayed(false)} > clear search results</a>
+                            <a href="/admin" style={{marginLeft:'270px',marginTop:'20px'}} onClick={() => setSearchValueDisplayed(false)} > clear search results</a>
                         ):(
                             <></>
                         )

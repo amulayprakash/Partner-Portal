@@ -29,6 +29,11 @@ const Login = () => {
         "Content-Type":"application/json"
       }
     })
+    // axios.post("http://localhost:1902/partnerUsers/login",{partnerUserEmail:email,password:password},{
+    //   "headers":{
+    //     "Content-Type":"application/json"
+    //   }
+    // })
     .then(res => {
         // cookies.set("loggedInPartnerUser",res.data.partner[0].partnerUid)
         // cookies.set("token",res.data.token,{

@@ -50,6 +50,9 @@ const HomePage = () => {
     const navigate=useNavigate()
     const cookies=new Cookies()
     
+    
+    const pUid=cookies.get('loggedInPartnerUser')
+
     const toggleModal=() => {
         setModal(!modal)
     }
@@ -121,8 +124,8 @@ const HomePage = () => {
     // },[])
     const getData=async(lowerCaseValue) => {
         try {
-            await axios.get(`https://we-safe-partner-portal-backend1.onrender.com/search?searchKey=${lowerCaseValue}`)
-            // await axios.get(`http://localhost:1902/search?searchKey=${lowerCaseValue}`)
+            await axios.get(`https://we-safe-partner-portal-backend1.onrender.com/customerData/${pUid}/search?searchKey=${lowerCaseValue}`)
+            //await axios.get(`http://localhost:1902/customerData/${pUid}/search?searchKey=${lowerCaseValue}`)
             .then(res=> {
                 setSearchValue(res.data.customers)
             }).catch(err => {
@@ -167,14 +170,14 @@ const HomePage = () => {
         //         }
         //     }
         // )
-        axios.post("https://we-safe-partner-portal-backend1.onrender.com/customerData/filter",{groupSelect,groupAssigned,qrAssigned,docsAssigned,qrScanData,registerDateStart,registerDateEnd},
+        axios.post(`https://we-safe-partner-portal-backend1.onrender.com/customerData/${pUid}/filter`,{groupSelect,groupAssigned,qrAssigned,docsAssigned,qrScanData,registerDateStart,registerDateEnd},
         {
             "headers":{
                 "Content-Type":"application/json"
             }
         }
         )
-        // axios.post("http://localhost:1902/customerData/filter",{groupSelect,groupAssigned,qrAssigned,docsAssigned,qrScanData,registerDateStart,registerDateEnd},
+        // axios.post(`http://localhost:1902/customerData/${pUid}/filter`,{groupSelect,groupAssigned,qrAssigned,docsAssigned,qrScanData,registerDateStart,registerDateEnd},
         // {
         //     "headers":{
         //         "Content-Type":"application/json"

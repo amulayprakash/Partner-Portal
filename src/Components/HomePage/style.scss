@@ -35,7 +35,7 @@
     color: var(--black-color);
     text-align: left;
   
-    @media screen and (min-width: 2000px) {
+    @media screen and (max-width: 2000px) {
       font-size: 2rem;
     }
   
@@ -61,7 +61,14 @@
 .app__header-btns{
   width: 100px;
   display: inline;  
-  
+  // @media screen and (min-width: 480px) {
+  //   size: 0.8rem;
+  //   font-size: x-small;
+  //   width: 100%;
+  //   display: flex;
+  //   flex-direction: column;
+  // }
+
 }
 
 input{
@@ -183,7 +190,8 @@ body.active-modal {
 //   content: attr(placeholder);
 // }
 input[type=date] {
-  text-align: right;
+  text-align: left;
+  padding: 5px;
 }
 
 input[type="date"]:before {

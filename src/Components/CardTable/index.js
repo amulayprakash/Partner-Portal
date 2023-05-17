@@ -2,7 +2,7 @@ import React,{useState,useEffect} from 'react'
 import axios from 'axios'
 import './style.scss'
 import { useNavigate } from 'react-router-dom'
-import { Button, Pagination, Typography } from '@mui/material'
+import { Button, Input, InputLabel, MenuItem, Pagination, Select, Typography } from '@mui/material'
 import {MdDeleteForever,MdClose} from 'react-icons/md'
 import {Link} from 'react-router-dom' 
 import PaginationComponents from '../PaginationComponent'
@@ -11,12 +11,13 @@ import ReactPaginate from 'react-paginate'
 import { group } from 'console'
 import {Map,GoogleApiWrapper} from 'google-maps-react' 
 import safe from '../assets/safe.png' 
+import Cookies from 'universal-cookie'
 //replace groups by cusgroups
 
 const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanData,docsAssigned,addToGroup,
     toggleAddToGroup,toggleMultiDocModal,addMultiDoc,filteredData,filterDataDisplayed,setFilterDataDisplayed}) => {
     const [datas, setData] = useState([]) 
-    const [newData, setNewData] = useState([])
+    var [newData, setNewData] = useState([])
     const [loading, setLoading] = useState(false)
     const [pageCount, setPageCount] = useState(0)
     const [docModal, setDocModal] = useState(false)
@@ -24,6 +25,7 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
     const [groupModal,setGroupModal]=useState(false)
     const [lastScannedQrModal, setLastScannedQrModal] = useState(false)
     const [multiSelect, setMultiSelect] = useState(false)
+    const [edit, setEdit] = useState(false)
 
     const [allGroups, setAllGroups] = useState([])
     const [groupSelect,setGroupSelect]=useState(false)
@@ -53,24 +55,43 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
     const [deleteKey, setDeleteKey] = useState('')
     const [qrdeleteId,setqrdeleteId]=useState('')
     const [deleteUserId, setDeleteUserId] = useState('')
+    const [ctype, setCtype] = useState('select')
 
     const [scanHistory,setScanHistory]=useState(null)
     const [searchValueDisplayed, setSearchValueDisplayed] = useState(false)
-    const navigate=useNavigate()
-    const excludedColumns=['_id']
 
+    const [editName, setEditName] = useState('')
+    const [editAddress, setEditAddress] = useState('')
+    const [editGender, setEditGender] = useState('')
+    const [editbg, setEditBg] = useState('')
+    const [editMobile, setEditMobile] = useState('')
+    const [editEmail, setEditEmail] = useState('')
+    const [editDob, setEditDob] = useState('')
+    const [editEc1, setEditEc1] = useState('')
+    const [editEc2, setEditEc2] = useState('')
+    const [editEcName1, setEditEcName1] = useState('')
+    const [editEcName2, setEditEcName2] = useState('')
+
+    const [editCustomer, setEditCustomer] = useState({})
+    const [editError, setEditError] = useState(false)
+    const navigate=useNavigate()
+
+    const cookies=new Cookies()
+    // const [loggedInUserId, setloggedInUserId] = useState('') 
+    const pUid=cookies.get('loggedInPartnerUser')
     //initial data
     useEffect(() => {
         const getNewData=async(curPage) => {
             setLoading(true)
             try {
-                await axios.get(`https://we-safe-partner-portal-backend1.onrender.com/customerData/new?page=${curPage}&limit=10`).then(res=>{
+                await axios.get(`https://we-safe-partner-portal-backend1.onrender.com/customerData/${pUid}/new?page=${curPage}&limit=10`).then(res=>{
                     setPageCount(Math.ceil(res.data.results.total/10))
+                    // setloggedInUserId(cookies.get('loggedInPartnerUser'))
                     setNewData(res.data.results.customers)
                     setLoading(false)
                     
                 })
-                // await axios.get(`http://localhost:1902/customerData/new?page=${curPage}&limit=10`).then(res=>{
+                // await axios.get(`http://localhost:1902/customerData/${pUid}/new?page=${curPage}&limit=10`).then(res=>{
                 //     setPageCount(Math.ceil(res.data.results.total/10))
                 //     setNewData(res.data.results.customers)
                 //     setLoading(false)
@@ -86,7 +107,6 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
         getNewData(1)
     },[])
 
-    
     //for searchbar
     useEffect(() => {
         if(searched.length!==0){
@@ -168,7 +188,7 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
         //         "Content-Type":"multipart/form-data",
         //     }
         // })
-        axios.post("https://we-safe-partner-portal-backend1.onrender.com/api/wesafe/docs/upload",{name,file,docType:description,customerId:custId,userId:ucid},{
+        axios.post("https://we-safe-partner-portal-backend1.onrender.com/api/wesafe/docs/upload",{name,file,docType:description,customerId:custId,userId:ucid,contentType:ctype},{
             headers:{
                 "Content-Type":"multipart/form-data",
             }
@@ -178,6 +198,7 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                 toggleDocModal()
                 setCustId('')
                 setUcid('')
+                setCtype('')
                 console.log(docTags)
                 window.location.reload()
             }).catch((err) => {
@@ -339,7 +360,9 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
 
     //to delete qr
     const handleQrDeleteClick=async(id) => {
-        axios.delete(`https://we-safe-partner-portal-backend1.onrender.com/qr/${id}`).then(res=> {
+        axios.delete(`https://we-safe-partner-portal-backend1.onrender.com/qr/${id}`)
+        //axios.delete(`http://localhost:1902/qr/${id}`)
+        .then(res=> {
             console.log(res)
             setqrdeleteId('')
             toggleDeleteQr()
@@ -439,12 +462,12 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
     const getNewData=async(curPage) => {
         setLoading(true)
         try {
-            await axios.get(`https://we-safe-partner-portal-backend1.onrender.com/customerData/new?page=${curPage}&limit=10`).then(res=>{
+            await axios.get(`https://we-safe-partner-portal-backend1.onrender.com/customerData/${pUid}/new?page=${curPage}&limit=10`).then(res=>{
                 setNewData(res.data.results.customers)
                 setLoading(false)
                 
             })
-            // await axios.get(`http://localhost:1902/customerData/new?page=${curPage}&limit=10`).then(res=>{
+            // await axios.get(`http://localhost:1902/customerData/${pUid}/new?page=${curPage}&limit=10`).then(res=>{
             //     setNewData(res.data.results.customers)
             //     setLoading(false)
                 
@@ -492,6 +515,14 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
         setLastScannedQrModal(!lastScannedQrModal)
     }
 
+    const toggleEditModal=() => {
+        setEdit(!edit)
+    }
+
+    const toggleEditError=() => {
+        setEditError(!editError)
+    }
+
     //fetching paginatedd api contd
     const handlePageChange=(data) => {
         let curPage=data.selected+1
@@ -513,6 +544,46 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
             setMultiSelect(true)
         }
         
+    }
+
+    //edit profile
+    const handleEditInfo=async(id) => {
+        setLoading(true)
+        axios.patch(`https://we-safe-partner-portal-backend1.onrender.com/customer/${id}`,{name:editName,address:editAddress,email:editEmail,
+            mobile:editMobile,gender:editGender,dob:editDob,bloodGroup:editbg,emergencyContactMobile1:editEc1,
+            emergencyContactName1:editEcName1,emergencyContactName2:editEcName2,emergencyContactMobile2:editEc2
+        },
+            {
+                "headers":{
+                    "Content-Type":"application/json"
+                }
+            }
+        )
+        // axios.patch(`http://localhost:1902/customer/${id}`,{name:editName,address:editAddress,email:editEmail,
+        //     mobile:editMobile,gender:editGender,dob:editDob,bloodGroup:editbg,emergencyContactMobile1:editEc1,
+        //     emergencyContactName1:editEcName1,emergencyContactName2:editEcName2,emergencyContactMobile2:editEc2
+        // },
+        //     {
+        //         "headers":{
+        //             "Content-Type":"application/json"
+        //         }
+        //     }
+        // )
+        .then(res => {
+            console.log(res.data)
+            if(res.data.message==='successfully updated'){
+                setCustId('')
+                setLoading(false)
+                toggleEditModal()
+                window.location.reload()
+            }else{
+                toggleEditError()
+            }
+            
+        })
+        .catch(err => {
+            alert(err.message)
+        })
     }
    
     //google maps api
@@ -765,7 +836,7 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                     <div>
                                     <Button style={{color:'white',borderRadius:'5px',
                                     backgroundColor:'#313bac',width:'140px',height:'25px',margin:'8px',
-                                    textDecoration:'none',marginTop:'25px'}} onClick={() => {
+                                    textDecoration:'none',marginTop:'10px'}} onClick={() => {
                                         setCustId(data._id)
                                         setUcid(`${data.userUid}_${data.childListUid}`)
                                         toggleDocModal()
@@ -783,6 +854,18 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                         }} 
                                         >
                                             Add/Edit Group
+                                        </Button>
+                                    </div>
+                                    <div>
+                                        <Button style={{color:'white',borderRadius:'5px',backgroundColor:'#313bac',
+                                        width:'140px',height:'25px',margin:'10px'}} 
+                                        onClick={() => {
+                                            setCustId(data._id)
+                                            toggleEditModal()
+                                            setEditCustomer(data)
+                                        }} 
+                                        >
+                                            Edit Profile
                                         </Button>
                                     </div>
                                     <div>
@@ -830,7 +913,21 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                     <TextField style={{marginTop:'20px',width:'500px',}}  className='form__text' id="outlined-basic" 
                                     variant="outlined" type='text' label='docType' onChange={(e) =>setDescription(e.target.value)} />
                                     
+                                    {/* <TextField style={{marginTop:'20px',width:'500px',}}  className='form__text' id="outlined-basic" 
+                                    variant="outlined" type='text' label='contentType(application/pdf, image/png, application/msword etc)' onChange={(e) =>setCtype(e.target.value)} /> */}
                                     
+                                    <Select style={{marginTop:'20px',width:'500px',}}  className='form__text' id="outlined-basic" 
+                                    variant="outlined" type='text' label="File Type"  value={ctype} onChange={(e) =>{
+                                        e.preventDefault()
+                                        setCtype(e.target.value)}}
+                                    >
+                                        <MenuItem value="select" >Select Type</MenuItem>
+                                        <MenuItem value='application/msword' >Word File</MenuItem>  
+                                        <MenuItem value='image/png'>Image File</MenuItem>  
+                                        <MenuItem value='application/pdf'>Pdf File</MenuItem>  
+                                        <MenuItem value='application/vnd.ms-excel' >Excel File</MenuItem>  
+                                    </Select>
+
                                     <Button className='btn p-text' variant="outlined" 
                                     style={{width:'100px',margin:'auto',marginTop:'20px'}}  type='submit'
                                     
@@ -1060,6 +1157,91 @@ const TableCard = ({searched,sort,groupSelected,groupAssigned,qrAssigned,qrScanD
                                         
                                         </form>
                                         
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            {
+                                edit && (
+                                    <div className='modal modal_edit' >
+                                
+                                        <div className='overlay overlay_edit' onClick={toggleEditModal} ></div>
+                                        <div>
+                                        <form onSubmit={(e) =>{
+                                            e.preventDefault()
+                                            handleEditInfo(custId)
+                                            console.log(editCustomer)
+                                        }} className='modal-content_edit' >
+                                        <MdClose onClick={toggleEditModal} style={{color:'#313bac',height:'1.2rem',width:'1.3rem',marginLeft:'480px',marginTop:'5px',marginBottom:'5px'}}  />
+                                        <h3  className='head-text' style={{margin:'auto',marginTop:'10px',fontSize:'1.5rem'}} >Edit <span>Profile</span></h3>
+                                            <TextField style={{marginTop:'15px',width:'500px',}}  className='form__text' id="outlined-basic" 
+                                            variant="outlined" label={`Name: ${editCustomer.name}`} value={editName} 
+                                            type='text' onChange={(e) => setEditName(e.target.value)}  />
+                                            <TextField style={{marginTop:'15px',width:'500px',}} className='form__text' id="outlined-basic" 
+                                            variant="outlined" label={`Email: ${editCustomer.email?editCustomer.email:'N/A'}`}  value={editEmail} 
+                                            type='text' onChange={(e) => setEditEmail(e.target.value)} />
+                                            <TextField style={{marginTop:'15px',width:'500px',}}  className='form__text' id="outlined-basic" 
+                                            variant="outlined" label={`Mobile: ${editCustomer.mobile?editCustomer.mobile:'N/A'}`} value={editMobile} 
+                                            type='text' onChange={(e) => setEditMobile(e.target.value)}  />
+                                            <TextField style={{marginTop:'15px',width:'500px',}}  className='form__text' id="outlined-basic" 
+                                            variant="outlined" label={`Address: ${editCustomer.address?editCustomer.address:'N/A'}`} value={editAddress}
+                                            type='text' onChange={(e) => setEditAddress(e.target.value)} />
+                                            <div style={{display:'flex'}} >
+                                                <TextField style={{marginTop:'15px',width:'150px'}}  className='form__text' id="outlined-basic" 
+                                                variant="outlined" label={`DOB: ${editCustomer.dob?editCustomer.dob.substring(0,10):'N/A'}`} value={editDob} 
+                                                type='text' onChange={(e) => setEditDob(e.target.value)} />
+                                                {/* <TextField style={{marginTop:'15px',width:'125px',}}  className='form__text' id="outlined-basic" 
+                                                variant="outlined" label='Name of Document' type='text'  /> */}
+                                                <TextField style={{marginTop:'15px',width:'150px',marginLeft:'25px'}}  className='form__text' id="outlined-basic" 
+                                                variant="outlined" label={`Blood Group: ${editCustomer.bloodGroup?editCustomer.bloodGroup:'N/A'}`} value={editbg} 
+                                                type='text' onChange={(e) => setEditBg(e.target.value)} />
+                                                <TextField style={{marginTop:'15px',width:'150px',marginLeft:'25px'}}  className='form__text' id="outlined-basic" 
+                                                variant="outlined" label={`Gender: ${editCustomer.gender?editCustomer.gender:'N/A'}`} value={editGender}
+                                                type='text' onChange={(e) => setEditGender(e.target.value)} />
+                                            </div>
+                                            <div style={{display:'flex'}} >
+                                                <TextField style={{marginTop:'15px',width:'240px'}}  className='form__text' id="outlined-basic" 
+                                                variant="outlined" label={`Contact 1 Name: ${editCustomer.emergencyContactName1?editCustomer.emergencyContactName1:'N/A'}`} value={editEcName1} 
+                                                type='text' onChange={(e) => setEditEcName1(e.target.value)} />
+                                                <TextField style={{marginTop:'15px',width:'240px',marginLeft:'20px'}}  className='form__text' id="outlined-basic" 
+                                                variant="outlined" label={`Contact 1 Number: ${editCustomer.emergencyContactMobile1?editCustomer.emergencyContactMobile1:'N/A'}`} value={editEc1} 
+                                                type='text' onChange={(e) => setEditEc1(e.target.value)} />
+                                                
+                                            </div>
+                                            <div>
+                                                <TextField style={{marginTop:'15px',width:'240px'}}  className='form__text' id="outlined-basic" 
+                                                variant="outlined" label={`Contact 2 Name: ${editCustomer.emergencyContactName2?editCustomer.emergencyContactName2:'N/A'}`} value={editEcName2}  
+                                                type='text' onChange={(e) => setEditEcName2(e.target.value)} />
+                                                <TextField style={{marginTop:'15px',width:'240px',marginLeft:'20px'}}  className='form__text' id="outlined-basic" 
+                                                variant="outlined" label={`Contact 2 Number: ${editCustomer.emergencyContactMobile2?editCustomer.emergencyContactMobile2:'N/A'}`} value={editEc2} 
+                                                type='text' onChange={(e) => setEditEc2(e.target.value)}  />
+                                            </div>
+                                            
+                                        <Button className='btn p-text close-modal' variant="outlined" 
+                                        style={{width:'150px',margin:'auto',marginTop:'10px',backgroundColor:'#8b1010',color:'white',marginBottom:'20px'}}  type='submit'>
+                                            Submit   
+                                        </Button>
+                                        
+                                        </form>
+                                        
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            {
+                                editError && (
+                                    <div className='modal' >
+                                
+                                        <div className='overlay' onClick={toggleEditError} ></div>
+                                        <div>
+                                        <form onSubmit={toggleEditError} className='modal-content' >
+                                        <MdClose onClick={toggleEditError} style={{color:'#313bac',height:'1.2rem',width:'1.3rem',marginLeft:'300px',marginTop:'10px',marginBottom:'5px'}}  />
+                                        <h3 style={{margin:'auto'}} >Internal Error. Try Again Later!</h3>
+                                        <Button className='btn p-text close-modal' variant="outlined" 
+                                        style={{width:'150px',marginTop:'20px',marginLeft:'30%',backgroundColor:'#313bac',color:'white',marginBottom:'20px'}}  type='submit'>
+                                            Try Again   
+                                        </Button>
+                                        </form>
                                         </div>
                                     </div>
                                 )

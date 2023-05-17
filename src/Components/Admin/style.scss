@@ -328,3 +328,15 @@ nav {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+input[type=date] {
+  text-align: left;
+  padding: 5px;
+}
+
+input[type="date"]:before {
+  color: gray;
+  font-size: 0.9rem;
+  content: attr(placeholder) !important;
+  margin-right: 0.5em;
+}
