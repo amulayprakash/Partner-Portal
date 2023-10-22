@@ -805,11 +805,15 @@ const TableCard = ({
                           />
                           <p style={{ marginLeft: "5px", displau: "flex" }}>
                             <b>
-                              {data.name}-{" "}
-                              {data.gender === 1 || data.gender === "male" ? (
-                                <>M</>
+                              {data.name}
+                              {data.gender === "Male" ? (
+                                <> - M</>
+                              ) : data.gender === "Female" ? (
+                                <> - F</>
+                              ) : data.gender === "" ? (
+                                ""
                               ) : (
-                                <>F</>
+                                <> - O</>
                               )}
                             </b>{" "}
                             <span></span>
